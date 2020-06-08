@@ -20,17 +20,22 @@
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="">
-    <meta property="og:type" content="website">
-<meta property="og:title" content="iluem&#39;Blog">
-<meta property="og:url" content="http://qhaoduoyu.github.io/index.html">
+    <meta name="description" content="我相信这是真的123123123123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="about">
+<meta property="og:url" content="http://qhaoduoyu.github.io/2020/06/08/about/index.html">
 <meta property="og:site_name" content="iluem&#39;Blog">
+<meta property="og:description" content="我相信这是真的123123123123">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-08T12:57:31.000Z">
+<meta property="article:modified_time" content="2020-06-08T13:23:42.038Z">
 <meta property="article:author" content="iluem">
+<meta property="article:tag" content="表单">
 <meta name="twitter:card" content="summary">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
-    <title>iluem&#39;s blog</title>
+    <title>about · iluem&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -85,6 +90,8 @@
 
     <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
@@ -209,14 +216,23 @@
 <meta name="generator" content="Hexo 4.2.1"></head>
 
     
-        <body class="home-body">
+        <body class="post-body">
     
     
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >iluem&#39;Blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">about</a>
+            </div>
+    </div>
     
     <a class="home-link" href=/>iluem'Blog</a>
 </header>
@@ -235,17 +251,17 @@ height:50vh;
     <!-- 主页  -->
     
     
-    <!-- 文章页  -->
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/index-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            iluem'Blog
-            <!-- 文章页  -->
+            about
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
@@ -253,12 +269,49 @@ height:50vh;
             <!-- 主页副标题  -->
             
             
-                时刻谨记自己很菜
-            
-            <!-- 文章页  -->
+            <!-- 404 -->
             
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "表单">表单</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">8</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/06/08</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -359,223 +412,70 @@ height:50vh;
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/06/08/about/" >
-            
-                <span>about</span>
-        </a>
-        <div class="abstract-content">
-            我相信这是真的123123123123
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="我相信这是真的"><a href="#我相信这是真的" class="headerlink" title="我相信这是真的"></a><strong>我相信这是真的</strong></h2><p><code>123123123123</code></p>
 
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/06/08</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "表单">表单</a>
-    
-</div>
-            
-        </div>
     </article>
+    <!-- license  -->
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/06/08/hello-world/" >
-            
-                <span>Hello World</span>
-        </a>
-        <div class="abstract-content">
-            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post1$ hexo new "My New Post"
-
-More info: Writing
-Run server1$ hexo server
-
-Mo...
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://qhaoduoyu.github.io">iluem</a>
+            <p>原文链接：<a href="http://qhaoduoyu.github.io/2020/06/08/about/">http://qhaoduoyu.github.io/2020/06/08/about/</a>
+            <p>发表日期：<a href="http://qhaoduoyu.github.io/2020/06/08/about/">六月 8日 2020, 8:57:31 晚上</a>
+            <p>更新日期：<a href="http://qhaoduoyu.github.io/2020/06/08/about/">June 8th 2020, 9:23:42 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/06/08</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
     
     <!-- paginator  -->
-    
-</main>
-            <!-- profile -->
+    <ul class="post-paginator">
+        <li class="next">
             
-            <div class="profile">
-    <img class="profile-avatar" alt="avatar" src= /avatar/iluem.jpg >
-    <div class="profile-name">iluem</div>
-    
-    <div class="profile-signature">
-        dayday up
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/06/08/hello-world/" title= "Hello World">
+                    <div class="prevTitle">Hello World</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC81MDQxMy8yNjkwMg==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
     </div>
+
+<!-- City版安装代码已完成 -->
     
     
-    <div class="profile-social">
-        
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
     
-        
-            
-                <a href="mailto:1875162999@qq.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/qhaoduoyu" class="iconfont-archer github" target="_blank" title=github></a>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                  
-                  <img class="profile-qr" src="/assets/wechat.png" />
-                </span>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer qq" title=qq>
-                  
-                  <img class="profile-qr" src="/assets/qq.jpg" />
-                </span>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
     
 
-    </div>
-    
-    
-        <div class="friends">
-            <div>FRIENDS</div>
-            
-                
-                    <span>
-                        <a href= //xzlxr.github.io target="_black">fe1w0</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //ueverglow.top target="_black">雨夜叶雨</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //iyzyi.com/ target="_black">iyzyi</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //ljzjsc.com target="_black">牢记自己是菜</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //ld1ng.com target="_black">Ld1ng</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //x1ngg3.github.io target="_black">x1ngg3</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //gha01un.github.io/ target="_black">H1un</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= ////blog.csdn.net/qq_44625297 target="_black">不学无术@</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //iv4n.cc target="_black">iv4n</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //3ND.xyz target="_black">3ND</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //altman.vips target="_black">altman</a>
-                    </span>
-                
-            
-        </div>
-    
-    
-</div>
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
             
         </div>
         <footer class="footer footer-unloaded">
@@ -665,6 +565,24 @@ Mo...
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#我相信这是真的"><span class="toc-number">1.</span> <span class="toc-text">我相信这是真的</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -794,6 +712,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
 	<!--动态线条背景-->
 <script type="text/javascript"
