@@ -210,8 +210,8 @@
   
   <div class="post">
     <h1 class="article-title">
-      <a href="/passagesabout/">
-        <span>about</span>
+      <a href="/passagestest/">
+        <span>Test</span>
       </a>
     </h1>
     <!-- PC端文章信息 -->
@@ -235,10 +235,30 @@
       
       
         <span>
-          浏览 : <span class="article-timer" data-identity="passagesabout"></span>
+          浏览 : <span class="article-timer" data-identity="passagestest"></span>
         </span>
       
     </div>
+    
+      <div id="passagestest" style="margin: 4rem 2px -1rem"></div>
+<script async>
+  (function(){
+    let playerTimer = setInterval(function(){
+      if(!window.APlayer){
+        return
+      }
+
+      new APlayer({
+        container: document.getElementById('passagestest'),
+        theme: '#e96900',
+        listFolded: false,
+        audio: [{"name":"I DO","artist":911,"url":"http://music.163.com/song/media/outer/url?id=28256115.mp3","cover":"http://p1.music.126.net/ZNnDcq2-b_An3_ag3H5XhQ==/5980243743520718.jpg"}]
+      });
+      
+      clearInterval(playerTimer)
+    }, 10);
+  })()
+</script>
     
     <!-- 文章简介 -->
     <div class="article-content">
@@ -273,57 +293,7 @@
       
         <div class="article-meta pull-right">
           <span class="pc-view">
-            <i class="iconfont icon-view"></i>浏览: <span class="article-timer" data-identity="passagesabout"></span>
-          </span>
-        </div>
-      
-    </div>
-  </div>
-  
-  <div class="post">
-    <h1 class="article-title">
-      <a href="/passageshello-world/">
-        <span>Hello World</span>
-      </a>
-    </h1>
-    <!-- PC端文章信息 -->
-    <div class="article-top-meta pc-view">
-      <span>
-        发布时间 : 2020-06-08
-      </span>
-    </div>
-    <!-- 移动端文章信息 -->
-    <div class="article-top-meta mobile-view">
-      <span>
-        发布 : 2020-06-08
-      </span>
-      
-      
-        <span>
-          浏览 : <span class="article-timer" data-identity="passageshello-world"></span>
-        </span>
-      
-    </div>
-    
-    <!-- 文章简介 -->
-    <div class="article-content">
-      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
-        
-      </div>
-    </div>
-    <div class="article-footer">
-      <div class="article-meta pull-left">
-        <!-- 分类pc端可见 -->
-        <span class="pc-view">
-          
-        <span>
-                    
-        </span>
-      </div>
-      
-        <div class="article-meta pull-right">
-          <span class="pc-view">
-            <i class="iconfont icon-view"></i>浏览: <span class="article-timer" data-identity="passageshello-world"></span>
+            <i class="iconfont icon-view"></i>浏览: <span class="article-timer" data-identity="passagestest"></span>
           </span>
         </div>
       
