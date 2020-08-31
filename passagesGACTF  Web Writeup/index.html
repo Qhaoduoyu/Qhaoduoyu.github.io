@@ -22,7 +22,7 @@
   
   
   
-  <title>GACTF Web Writeup | iluem&#39;Blog</title>
+  <title>GACTF 2020 Web Writeup | iluem&#39;Blog</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -227,7 +227,7 @@
 
 <div class="post">
   <h1 class="article-title">
-    <span>GACTF Web Writeup</span>
+    <span>GACTF 2020 Web Writeup</span>
   </h1>
   <div class="article-top-meta">
     <span>
@@ -253,7 +253,7 @@
 
   <div class="article-content">
     <div class="markdown-body">
-      <h2 id="GACTF-Web-Writeup"><a href="#GACTF-Web-Writeup" class="headerlink" title="GACTF  Web Writeup"></a>GACTF  Web Writeup</h2><h3 id="simpleflask"><a href="#simpleflask" class="headerlink" title="simpleflask"></a><strong>simpleflask</strong></h3><p>很明显的<strong>ssti</strong>，大概过滤了</p>
+      <h2 id="GACTF-2020-Web-Writeup"><a href="#GACTF-2020-Web-Writeup" class="headerlink" title="GACTF 2020 Web Writeup"></a>GACTF 2020 Web Writeup</h2><h3 id="simpleflask"><a href="#simpleflask" class="headerlink" title="simpleflask"></a><strong>simpleflask</strong></h3><p>很明显的<strong>ssti</strong>，大概过滤了</p>
 <pre><code>pop、%20、%09、%0a、%0d、request、&#39;、+、import、\、|、eval、system、exec···</code></pre><p>等等，但是可以用<code>&quot;</code>，报错可以看到部分源码</p>
 <pre><code class="python"> if name == &quot;&quot;:
         return render_template_string(&quot;&lt;h1&gt;hello world!&lt;h1&gt;&quot;)
