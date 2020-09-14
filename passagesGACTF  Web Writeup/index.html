@@ -447,7 +447,8 @@ if __name__ == &#39;__main__&#39;:
 <p>看到<code>return flask.render_template_string(hack)</code>，又回到<code>ssti</code>，<code>flag</code>在<code>config:FLAG</code>里，但是过滤了<code>config</code>，这里学习一下<a href="https://www.mi1k7ea.com/" target="_blank" rel="noopener"><strong>Mi1k7ea</strong></a>师傅的绕过</p>
 <p><img src="https://i.loli.net/2020/08/30/qrux1oQwmiW7hZl.png" alt="image-20200830125327435"></p>
 <p>因此通过</p>
-<pre><code>{{url_for.__globals__['current_app'].__dict__}}</code></pre><p>即可得到flag</p>
+<pre><code>{{url_for.__globals__['current_app'].__dict__}}
+{{get_flashed_messages.__globals__['current_app'].__dict__}}</code></pre><p>即可得到flag</p>
 <p><img src="https://i.loli.net/2020/08/30/Nv6W2YjdsfEeXJo.png" alt="image-20200830125555051"></p>
 <p><a href="https://www.mi1k7ea.com/2019/06/02/浅析Python-Flask-SSTI/#无法直接获取全局变量config" target="_blank" rel="noopener">参考链接</a></p>
 <h3 id="XWiki"><a href="#XWiki" class="headerlink" title="XWiki"></a><strong>XWiki</strong></h3><p>找到一个CVE</p>
@@ -587,6 +588,12 @@ var_dump($result);
         <a href="/passages2020%E9%92%93%E9%B1%BC%E5%9F%8E%E6%9D%AF%20Web%20Writeup/" target="_self">2020钓鱼城杯 Web Writeup</a>
       </div>
     
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passagesDDCTF/" target="_self">DDCTF</a>
+        <i class="iconfont icon-next"></i>
+      </div>
     
   </nav>
 

