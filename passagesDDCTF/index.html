@@ -27,7 +27,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Hexo, theme-bmw" />
+    <meta name="keywords" content="Web,CTF," />
   
 
   <script>
@@ -232,8 +232,15 @@
   <div class="article-top-meta">
     <span>
       发布 : 
-      2020-09-04
+      2020-09-07
     </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Web/">
+            Web
+          </a>
+      </span>
     
     
       <span>
@@ -258,7 +265,7 @@
 <p><a href="https://cloud.tencent.com/document/product/228/10771" target="_blank" rel="noopener">https://cloud.tencent.com/document/product/228/10771</a></p>
 <p>然后一测试果然对了</p>
 <p>后边是一个<code>spel</code>模板注入</p>
-<p>参考<a href="https://www.k0rz3n.com/" target="_blank" rel="noopener">K0rz3n</a>的一篇文章</p>
+<p>参考<a href="https://www.k0rz3n.com/" target="_blank" rel="noopener">K0rz3n</a>的一篇<a href="https://www.k0rz3n.com/2018/11/12/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E5%B8%A6%E4%BD%A0%E7%90%86%E8%A7%A3%E6%BC%8F%E6%B4%9E%E4%B9%8BSSTI%E6%BC%8F%E6%B4%9E" target="_blank" rel="noopener">文章</a></p>
 <p>放上最终exp</p>
 <pre><code class="python">import hmac
 import base64
@@ -285,7 +292,7 @@ print(r.text)</code></pre>
 <p>点击兑换后</p>
 <p><img src="https://i.loli.net/2020/09/06/mSp2hoqJYIgA7zu.png" alt="image-20200906134048180"></p>
 <p>提示 : “恭喜你，买到了礼物，里面有夹心饼干、杜松子酒和一张小纸条，纸条上面写着：url: /flag , SecKey: Udc13VD5adM_c10nPxFu@v12，你能看懂它的含义吗？”</p>
-<p><img src="C:%5CUsers%5C18751%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20200906134216934.png" alt="image-20200906134216934"></p>
+<p><img src="https://i.loli.net/2020/09/07/AUL79acf6wXNuEo.png" alt="image-20200906134216934"></p>
 <p>其中杜松子酒是<code>gin</code>的意思，在这里是指go的gin框架。然后接下来拿出凡哥<code>iv4n</code>写的工具一键修改session。</p>
 <pre><code class="bash">root@kali:~# ./faker dec -c &quot;MTU5OTM3MTA2MXxEdi1CQkFFQ180SUFBUkFCRUFBQV81cl9nZ0FDQm5OMGNtbHVad3dJQUFaM1lXeHNaWFFHYzNSeWFXNW5ER01BWVhzaWIzZHBibWR6SWpwYlhTd2lhVzUyWlhOMGN5STZXMTBzSW0xdmJtVjVJam81T1RrNU9UazRNVEkxTURnd016Z3pMQ0p1YjNkZmRHbHRaU0k2TVRVNU9UTTNNRGszTlN3aWMzUmhjblJmZEdsdFpTSTZNVFU1T1RNM01EYzVOWDBHYzNSeWFXNW5EQWNBQldGa2JXbHVCR0p2YjJ3Q0FnQUF8syX_1eT-vi_9JYZ5XR8hbomW0lRg7HQ-f896e1YlNQk=&quot; 
 map[admin:false wallet:{&quot;owings&quot;:[],&quot;invests&quot;:[],&quot;money&quot;:9999998125080383,&quot;now_time&quot;:1599370975,&quot;start_time&quot;:1599370795}]
@@ -312,6 +319,15 @@ MTU5OTM3MTgzMXxFXy1CQkFFQkEwOWlhZ0hfZ2dBQkVBRVFBQUFkXzRJQUFRWnpkSEpwYm1jTUJ3QUZZ
     <div class="article-meta pull-left">
       <span>
         
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/CTF/">
+              #CTF
+            </a>
+          </span>
+          
+        
       </span>
     </div>
     <div class="article-meta pull-right">
@@ -332,9 +348,15 @@ MTU5OTM3MTgzMXxFXy1CQkFFQkEwOWlhZ0hfZ2dBQkVBRVFBQUFkXzRJQUFRWnpkSEpwYm1jTUJ3QUZZ
       <div class="nav-pre">
         <i class="iconfont icon-prev"></i>
         上一篇:
-        <a href="/passagesGACTF%20%20Web%20Writeup/" target="_self">GACTF 2020 Web Writeup</a>
+        <a href="/passages2020%E9%92%93%E9%B1%BC%E5%9F%8E%E6%9D%AF%20Web%20Writeup/" target="_self">2020钓鱼城杯 Web Writeup</a>
       </div>
     
+    
+      <div class="nav-next">
+        下一篇:
+        <a href="/passagesBUUCTF/" target="_self">BUUCTF WriteUp</a>
+        <i class="iconfont icon-next"></i>
+      </div>
     
   </nav>
 
